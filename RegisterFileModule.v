@@ -186,7 +186,7 @@ endmodule
 
 // //********************************* Start Testing *************************************//
 
-
+//testbench for register file
 module register_file_tb;
     // Inputs
     reg clk;
