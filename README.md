@@ -2,7 +2,6 @@
 
 This repository contains the implementation and simulation in Verilog of a two-port output Register File. The Register File consists of 32 registers of 32 bits and two output ports, following the specifications detailed in the task. Register zero cannot be altered and will always have a value of zero.
 
-Components:
 The circuit is implemented by interconnecting three types of components: 
 1. Binary decoder
 2. Multiplexer
