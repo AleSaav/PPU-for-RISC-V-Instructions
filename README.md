@@ -20,6 +20,18 @@ Simulation:
 
 # ALU (Arithmetic Logic Unit)
 
+This repository contains the implementation of an Arithmetic Logic Unit (ALU) circuit. The ALU is a combinational circuit designed to perform arithmetic and logic operations on two input numbers (A and B). The result of the operations includes an output number (Out) and four condition flag bits (Z, N, C, and V).
+
+Flags Explanation:
+1. Z (Zero Flag): Indicates whether the output (Out) is zero.
+2. N (Sign Flag): Represents the sign of the output result.
+3. C (Carry/Borrow Flag): Used for addition and subtraction operations to indicate overflow or underflow.
+4. V (Overflow Flag): Indicates overflow or underflow for signed arithmetic operations.
+
+Demonstration:
+1. Set the initial values for A and B as provided.
+2. Increment the Op value at regular intervals until reaching 1111.
+3. Monitor and print the binary values of Op, A, B, Out, and the flags at each step.
 
 # Second Operand Handler
 
