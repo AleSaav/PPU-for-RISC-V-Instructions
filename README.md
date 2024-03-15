@@ -28,7 +28,7 @@ Flags Explanation:
 3. C (Carry/Borrow Flag): Used for addition and subtraction operations to indicate overflow or underflow.
 4. V (Overflow Flag): Indicates overflow or underflow for signed arithmetic operations.
 
-Demonstration:
+Simulation:
 1. Set the initial values for A and B as provided.
 2. Increment the Op value at regular intervals until reaching 1111.
 3. Monitor and print the binary values of Op, A, B, Out, and the flags at each step.
@@ -37,7 +37,7 @@ Demonstration:
 
 This repository contains the Verilog implementation of a Second Operand Handler circuit implementation and demonstrating its functionality by calculating the output value (N) for all combinations of the input selection bits.
 
-Demonstration:
+Simulation:
 1. Set the initial values for RB, imm12_I, iImm12_S, Imm20, and PC as provided.
 2. Calculate and print the binary value of the output (N) for all combinations of the input selection bits (S2, S1, and S0).
 
