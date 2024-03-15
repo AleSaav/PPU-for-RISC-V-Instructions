@@ -2,7 +2,7 @@
 
 This repository contains the implementation and simulation in Verilog of a 5 stage pipeline CPU using RISCV Architecture.
 
-# Register File. 
+# Register File
 The Register File consists of 32 registers of 32 bits and two output ports. 
 Register zero cannot be altered and will always have a value of zero.
 
@@ -20,7 +20,14 @@ Simulation:
 
 # ALU (Arithmetic Logic Unit)
 
+
 # Second Operand Handler
+
+This repository contains the Verilog implementation of a Second Operand Handler circuit implementation and demonstrating its functionality by calculating the output value (N) for all combinations of the input selection bits.
+
+Demo:
+1. Set the initial values for RB, imm12_I, iImm12_S, Imm20, and PC as provided.
+2. Calculate and print the binary value of the output (N) for all combinations of the input selection bits (S2, S1, and S0).
 
 # Instruction Memory 
 
