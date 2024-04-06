@@ -131,8 +131,7 @@ instruction_memory Inst_Mem(
 // Clock generator
 initial begin
     Reset <= 1'b1;
-    stall_NPC <= 1'b1;
-    stall_PC <= 1'b1;
+    LE <= 1'b1;
     S <= 1'b0;
     Clk <= 1'b0;
     #2 Clk <= ~Clk;
@@ -148,7 +147,7 @@ initial begin
 end 
 
 initial begin
-  $monitor("Instruction: %b | CLK: %b | PC: %d | nPC: %d", DataOut_InstructionMemory, Clk, PC[8:0], nPC[8:0]);
+  $monitor("");
 end
 
 endmodule
