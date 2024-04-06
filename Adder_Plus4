@@ -1,0 +1,4 @@
+//Adder + 4
+module Adder_Plus4(output [31:0] Adder_OUT, input[31:0] A);
+     assign Adder_OUT = A + 32'b100;
+endmodule
