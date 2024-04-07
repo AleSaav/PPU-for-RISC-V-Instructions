@@ -1,9 +1,10 @@
 //includes
-'include "PC_Register.v"
-'include "Adder.v"
-'include "Stages.v"
-'include "instruction_memory.v"
-'include "Control_Unit.v"
+`include "PC_Register.v"
+`include "Adder.v"
+`include "Stages.v"
+`include "instruction_memory.v"
+`include "Control_Unit.v"
+`include "Muxes.v"
 
 module PPU (
   
@@ -13,13 +14,20 @@ module PPU (
 
 );
 
+
+
+/*********** Initializing wires and registers ***********/
+
 reg Reset;
 reg Clk;
 reg S;
 
 
-/*********** Iterations Of Modules ***********/
 
+
+
+
+/*********** Iterations Of Modules ***********/
 
 //Maybe we could add a reset module idk
 
@@ -78,7 +86,7 @@ MEM_WB_Register MEM_WB(
 instruction_memory Inst_Mem(
     //instruction_memory Output
     I,
-
+    
     //instruction_memory Input
     A
 );
@@ -88,6 +96,10 @@ instruction_memory Inst_Mem(
 
 
 
+
+/*---------- Muxes ----------*/
+
+//Control Unit Mux
 
 
 
@@ -131,7 +143,7 @@ instruction_memory Inst_Mem(
 // Clock generator
 initial begin
     Reset <= 1'b1;
-    LE <= 1'b1;
+    LE <= 1'b0;
     S <= 1'b0;
     Clk <= 1'b0;
     #2 Clk <= ~Clk;
