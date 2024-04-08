@@ -31,7 +31,7 @@ module ID_EX_Register (
     input [3:0] EX_ALU_op_IN,
     input [2:0] EX_shift_imm_IN,
     input [1:0] RAM_Size_IN,
-    input [6:0] Comb_OpFunct_IN
+    input [9:0] Comb_OpFunct_IN,
 
     //Pipeline Register Output Signals 
     output reg EX_Load_Instr_OUT, EX_RF_Enable_OUT, RAM_Enable_OUT, RAM_RW_OUT, RAM_SE_OUT, 
@@ -39,7 +39,7 @@ module ID_EX_Register (
     output reg [3:0] EX_ALU_op_OUT,
     output reg [2:0] EX_shift_imm_OUT,
     output reg [1:0] RAM_Size_OUT,
-    output reg [6:0] Comb_OpFunct_OUT
+    output reg [9:0] Comb_OpFunct_OUT
     );
 
     always @ (posedge clk) 
@@ -58,7 +58,7 @@ module ID_EX_Register (
                 EX_ALU_op_OUT <= 4'b0;
                 EX_shift_imm_OUT <= 3'b0;
                 RAM_Size_OUT  <= 2'b0;
-                Comb_OpFunct_OUT  <= 7'b0;
+                Comb_OpFunct_OUT  <= 10'b0;
             end
             
             default:
@@ -74,7 +74,7 @@ module ID_EX_Register (
                 EX_ALU_op_OUT <= 4'b0;
                 EX_shift_imm_OUT <= 3'b0;
                 RAM_Size_OUT  <= 2'b0;
-                Comb_OpFunct_OUT  <= 7'b0;
+                Comb_OpFunct_OUT  <= 10'b0;
             end
         endcase
     end
@@ -84,7 +84,7 @@ module EX_MEM_Register (
     //Pipeline Register Input Signals
     input EX_Load_Instr_IN, EX_RF_Enable_IN, RAM_Enable_IN, RAM_RW_IN, RAM_SE_IN,
     input  Reset, clk, //Reset Signal and Clock Signal
-    input [1:0] RAM_Size_IN
+    input [1:0] RAM_Size_IN,
 
     //Pipeline Register Output Signals
     output reg EX_Load_Instr_OUT, EX_RF_Enable_OUT, RAM_Enable_OUT, RAM_RW_OUT, RAM_SE_OUT, 
@@ -120,7 +120,7 @@ endmodule
 module MEM_WB_Register (
     //Pipeline Register Input Signals
     input EX_RF_Enable_IN,
-    input  Reset, clk //Reset Signal and Clock Signal
+    input  Reset, clk, //Reset Signal and Clock Signal
     //Pipeline Register Output Signals
     output reg EX_RF_Enable_OUT
     );
