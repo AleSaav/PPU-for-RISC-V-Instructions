@@ -285,9 +285,7 @@ initial begin
 end
 
 initial begin
-    //$monitor("PcIn %d\n PCout %d\n Instruction %b", PC_In, PC_Out, Instruction);
-    //$monitor("Instruction %b", Instruction);
-    $monitor("PC %d\n\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\njump_instr %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nINPUT ID/EX PIPELINE\nEX_Load_Instr_IN %b\nEX_RF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nEX_ALU_op_IN %b\nEX_shift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT EX/MEM PIPELINE\nEX_Load_Instr_IN %b\nEX_RF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nINPUT MEM/WB PIPELINE\nRF_Enable_IN %b\n-----------------------------------------------------------------------------\n", 
+    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\njump_instr %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nINPUT ID/EX PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nEX_ALU_op_IN %b\nEX_shift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT EX/MEM PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nINPUT MEM/WB PIPELINE\nRF_Enable_IN %b\n-----------------------------------------------------------------------------\n", 
     PC_Out, 
     load_Instr,
     RF_enable,
@@ -322,32 +320,5 @@ initial begin
     EX_RAM_Size,
     Mem_RF_enable);
 
-    // $display("ID/EX");
-    // $monitor("EX_Load_Instr_IN %b\nEX_RF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nEX_ALU_op_IN %b\nEX_shift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n",
-    // Mux_load_Instr,
-    // Mux_RF_enable,
-    // Mux_RAM_Enable,
-    // Mux_RAM_RW,
-    // Mux_RAM_SE,
-    // Mux_JALR_Instr,
-    // Mux_JAL_Instr,
-    // Mux_AUIPC_Instr,
-    // Mux_shift_imm,
-    // Mux_ALU_op,
-    // Mux_RAM_Size,
-    // Mux_Comb_OpFunct);
-
-    // $display("EX/MEM");
-    // $display("EX_Load_Instr_IN %b\nEX_RF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n",
-    // EX_load_Instr,
-    // EX_RF_enable,
-    // EX_RAM_Enable,
-    // EX_RAM_RW,
-    // EX_RAM_SE,
-    // EX_RAM_Size); 
-
-    // $display("MEM/WB");
-    // $display("RF_Enable_IN %b\n",
-    // Mem_RF_enable);
 end
 endmodule
