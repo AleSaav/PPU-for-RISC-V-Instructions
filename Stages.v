@@ -57,8 +57,8 @@ module ID_EX_Register (
                 AUIPC_Instr_OUT = 1'b0;
                 EX_ALU_op_OUT = 4'b0;
                 EX_shift_imm_OUT = 3'b0;
-                RAM_Size_OUT = 2'b0;
-                Comb_OpFunct_OUT = 10'b0;
+                RAM_Size_OUT  = 2'b0;
+                Comb_OpFunct_OUT  = 10'b0;
             end
             
             default:
