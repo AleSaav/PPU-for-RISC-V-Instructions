@@ -29,7 +29,6 @@ wire RF_enable;
 wire RAM_Enable;
 wire RAM_RW;
 wire RAM_SE;
-wire jump_instr;
 wire JALR_Instr;
 wire JAL_Instr;
 wire AUIPC_Instr;
@@ -44,7 +43,6 @@ wire Mux_RF_enable;
 wire Mux_RAM_Enable;
 wire Mux_RAM_RW;
 wire Mux_RAM_SE;
-wire Mux_jump_instr;
 wire Mux_JALR_Instr;
 wire Mux_JAL_Instr;
 wire Mux_AUIPC_Instr;
@@ -176,12 +174,12 @@ EX_MEM_Register EX_MEM(
 //MEM_WB_Register
 MEM_WB_Register MEM_WB(
     //MEM_WB_Register Inputs
-    .EX_RF_Enable_IN(WB_RF_enable),
+    .EX_RF_Enable_IN(Mem_RF_enable),
     .Reset(GlobalReset), 
     .clk(clk), 
 
     //MEM_WB_Register Outputs
-    .EX_RF_Enable_OUT(RF_enable)
+    .EX_RF_Enable_OUT(WB_RF_enable)
 );
 
 //instruction_memory
@@ -204,7 +202,6 @@ Control_Unit CU(
     .RAM_Enable(RAM_Enable),
     .RAM_RW(RAM_RW),
     .RAM_SE(RAM_SE), 
-    .jump_instr(jump_instr),
     .JALR_Instr(JALR_Instr),
     .JAL_Instr(JAL_Instr),
     .AUIPC_Instr(AUIPC_Instr),
@@ -220,8 +217,7 @@ control_unit_multiplexer MuxCU(
         .ID_RF_Enable_IN(RF_enable), 
         .RAM_Enable_IN(RAM_Enable), 
         .RAM_RW_IN(RAM_RW), 
-        .RAM_SE_IN(RAM_SE), 
-        .Jump_Instr_IN(jump_instr),
+        .RAM_SE_IN(RAM_SE),
         .JALR_Instr_IN(JALR_Instr), 
         .JAL_Instr_IN(JAL_Instr), 
         .AUIPC_Instr_IN(AUIPC_Instr),
@@ -235,7 +231,6 @@ control_unit_multiplexer MuxCU(
         .RAM_Enable_OUT(Mux_RAM_Enable), 
         .RAM_RW_OUT(Mux_RAM_RW), 
         .RAM_SE_OUT(Mux_RAM_SE), 
-        .Jump_Instr_OUT(Mux_jump_instr),
         .JALR_Instr_OUT(Mux_JALR_Instr), 
         .JAL_Instr_OUT(Mux_JAL_Instr), 
         .AUIPC_Instr_OUT(Mux_AUIPC_Instr),
@@ -285,14 +280,13 @@ initial begin
 end
 
 initial begin
-    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\njump_instr %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nINPUT ID/EX PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nEX_ALU_op_IN %b\nEX_shift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT EX/MEM PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nINPUT MEM/WB PIPELINE\nRF_Enable_IN %b\n-----------------------------------------------------------------------------\n", 
+    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nINPUT ID/EX PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nEX_ALU_op_IN %b\nEX_shift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT EX/MEM PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nINPUT MEM/WB PIPELINE\nRF_Enable_IN %b\n-----------------------------------------------------------------------------\n", 
     PC_Out, 
     load_Instr,
     RF_enable,
     RAM_Enable,
     RAM_RW,
     RAM_SE,
-    jump_instr,
     JALR_Instr,
     JAL_Instr,
     AUIPC_Instr,
