@@ -37,7 +37,7 @@ wire [3:0] ALU_op;
 wire [1:0] RAM_Size;
 wire [9:0] Comb_OpFunct;
 
-//Signal Mux
+//Signal Mux (12)
 wire Mux_load_Instr;
 wire Mux_RF_enable;
 wire Mux_RAM_Enable;
@@ -65,16 +65,33 @@ wire [3:0] EX_ALU_op;
 wire [1:0] EX_RAM_Size;
 wire [9:0] EX_Comb_OpFunct;
 
-//Signal Memory (6)
+//Signal Memory (12)
 wire Mem_load_Instr;
 wire Mem_RF_enable;
 wire Mem_RAM_Enable;
 wire Mem_RAM_RW;
 wire Mem_RAM_SE;
+wire Mem_JALR_Instr;
+wire Mem_JAL_Instr;
+wire Mem_AUIPC_Instr;
 wire [1:0] Mem_RAM_Size;
+wire [2:0] Mem_shift_imm;
+wire [3:0] Mem_ALU_op;
+wire [9:0] Mem_Comb_OpFunct;
 
-//Signal WB (1)
+//Signal WB (12)
+wire WB_load_Instr;
 wire WB_RF_enable;
+wire WB_RAM_Enable;
+wire WB_RAM_RW;
+wire WB_RAM_SE;
+wire WB_JALR_Instr;
+wire WB_JAL_Instr;
+wire WB_AUIPC_Instr;
+wire [1:0] WB_RAM_Size;
+wire [2:0] WB_shift_imm;
+wire [3:0] WB_ALU_op;
+wire [9:0] WB_Comb_OpFunct;
 
 //PC wires
 wire [31:0] PC_Out; //Program Counter Output 
@@ -153,33 +170,67 @@ ID_EX_Register ID_EX(
 //EX_MEM_Register
 EX_MEM_Register EX_MEM(
     //EX_MEM_Register Inputs
-    .EX_Load_Instr_IN(EX_load_Instr),
-    .EX_RF_Enable_IN(EX_RF_enable), 
+    .MEM_Load_Instr_IN(EX_load_Instr), 
+    .MEM_RF_Enable_IN(EX_RF_enable), 
     .RAM_Enable_IN(EX_RAM_Enable), 
     .RAM_RW_IN(EX_RAM_RW), 
-    .RAM_SE_IN(EX_RAM_SE),
+    .RAM_SE_IN(EX_RAM_SE), 
+    .JALR_Instr_IN(EX_JALR_Instr), 
+    .JAL_Instr_IN(EX_JAL_Instr), 
+    .AUIPC_Instr_IN(EX_AUIPC_Instr),
+    .MEM_ALU_op_IN(EX_ALU_op), 
+    .MEM_shift_imm_IN(EX_shift_imm), 
+    .RAM_Size_IN(EX_RAM_Size), 
+    .Comb_OpFunct_IN(EX_Comb_OpFunct),
     .Reset(GlobalReset), 
     .clk(clk), 
-    .RAM_Size_IN(EX_RAM_Size), 
 
     //EX_MEM_Register Outputs
-    .EX_Load_Instr_OUT(Mem_load_Instr), 
-    .EX_RF_Enable_OUT(Mem_RF_enable), 
+    .MEM_Load_Instr_OUT(Mem_load_Instr), 
+    .MEM_RF_Enable_OUT(Mem_RF_enable), 
     .RAM_Enable_OUT(Mem_RAM_Enable), 
     .RAM_RW_OUT(Mem_RAM_RW), 
-    .RAM_SE_OUT(Mem_RAM_SE),
-    .RAM_Size_OUT(Mem_RAM_Size)
+    .RAM_SE_OUT(Mem_RAM_SE), 
+    .JALR_Instr_OUT(Mem_JALR_Instr), 
+    .JAL_Instr_OUT(Mem_JAL_Instr), 
+    .AUIPC_Instr_OUT(Mem_AUIPC_Instr),
+    .MEM_ALU_op_OUT(Mem_ALU_op), 
+    .MEM_shift_imm_OUT(Mem_shift_imm), 
+    .RAM_Size_OUT(Mem_RAM_Size), 
+    .Comb_OpFunct_OUT(Mem_Comb_OpFunct)
 );
 
 //MEM_WB_Register
 MEM_WB_Register MEM_WB(
     //MEM_WB_Register Inputs
-    .EX_RF_Enable_IN(Mem_RF_enable),
+    .WB_Load_Instr_IN(Mem_load_Instr), 
+    .WB_RF_Enable_IN(Mem_RF_enable), 
+    .RAM_Enable_IN(Mem_RAM_Enable), 
+    .RAM_RW_IN(Mem_RAM_RW), 
+    .RAM_SE_IN(Mem_RAM_SE), 
+    .JALR_Instr_IN(Mem_JALR_Instr), 
+    .JAL_Instr_IN(Mem_JAL_Instr), 
+    .AUIPC_Instr_IN(Mem_AUIPC_Instr),
+    .WB_ALU_op_IN(Mem_ALU_op), 
+    .WB_shift_imm_IN(Mem_shift_imm), 
+    .RAM_Size_IN(Mem_RAM_Size), 
+    .Comb_OpFunct_IN(Mem_Comb_OpFunct),
     .Reset(GlobalReset), 
     .clk(clk), 
 
     //MEM_WB_Register Outputs
-    .EX_RF_Enable_OUT(WB_RF_enable)
+    .WB_Load_Instr_OUT(WB_load_Instr), 
+    .WB_RF_Enable_OUT(WB_RF_enable), 
+    .RAM_Enable_OUT(WB_RAM_Enable), 
+    .RAM_RW_OUT(WB_RAM_RW), 
+    .RAM_SE_OUT(WB_RAM_SE), 
+    .JALR_Instr_OUT(WB_JALR_Instr),
+    .JAL_Instr_OUT(WB_JAL_Instr),
+    .AUIPC_Instr_OUT(WB_AUIPC_Instr),
+    .WB_ALU_op_OUT(WB_ALU_op),
+    .WB_shift_imm_OUT(WB_shift_imm),
+    .RAM_Size_OUT(WB_RAM_Size),
+    .Comb_OpFunct_OUT(WB_Comb_OpFunct)
 );
 
 //instruction_memory
@@ -280,7 +331,7 @@ initial begin
 end
 
 initial begin
-    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nINPUT ID/EX PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nEX_ALU_op_IN %b\nEX_shift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT EX/MEM PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nINPUT MEM/WB PIPELINE\nRF_Enable_IN %b\n-----------------------------------------------------------------------------\n", 
+    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nINPUT ID/EX PIPELINE\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nALU_op_IN %b\nshift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT PIPELINE EX/MEM\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nALU_op_IN %b\nshift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nINPUT PIPELINE MEM/WB\nLoad_Instr_IN %b\nRF_Enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nALU_op_IN %b\nshift_imm_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n-------------------------------------------------------------------------\n", 
     PC_Out, 
     load_Instr,
     RF_enable,
@@ -311,8 +362,37 @@ initial begin
     EX_RAM_Enable,
     EX_RAM_RW,
     EX_RAM_SE,
+    EX_JALR_Instr,
+    EX_JAL_Instr,
+    EX_AUIPC_Instr,
+    EX_ALU_op,
+    EX_shift_imm,
     EX_RAM_Size,
-    Mem_RF_enable);
-
+    EX_Comb_OpFunct,
+    Mem_load_Instr,
+    Mem_RF_enable,
+    Mem_RAM_Enable,
+    Mem_RAM_RW,
+    Mem_RAM_SE,
+    Mem_JALR_Instr,
+    Mem_JAL_Instr,
+    Mem_AUIPC_Instr,
+    Mem_RAM_Size,
+    Mem_shift_imm,
+    Mem_ALU_op,
+    Mem_Comb_OpFunct,
+    WB_load_Instr,
+    WB_RF_enable,
+    WB_RAM_Enable,
+    WB_RAM_RW,
+    WB_RAM_SE,
+    WB_JALR_Instr,
+    WB_JAL_Instr,
+    WB_AUIPC_Instr,
+    WB_RAM_Size,
+    WB_shift_imm,
+    WB_ALU_op,
+    WB_Comb_OpFunct
+    );
 end
 endmodule

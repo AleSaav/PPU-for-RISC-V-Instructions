@@ -47,34 +47,34 @@ module ID_EX_Register (
             case(Reset)
             1'b1: 
             begin
-                EX_Load_Instr_OUT <= 1'b0;
-                EX_RF_Enable_OUT <= 1'b0;
-                RAM_Enable_OUT <= 1'b0;
-                RAM_RW_OUT <= 1'b0;
-                RAM_SE_OUT  <= 1'b0;
-                JALR_Instr_OUT <= 1'b0;
-                JAL_Instr_OUT <= 1'b0;
-                AUIPC_Instr_OUT <= 1'b0;
-                EX_ALU_op_OUT <= 4'b0;
-                EX_shift_imm_OUT <= 3'b0;
-                RAM_Size_OUT  <= 2'b0;
-                Comb_OpFunct_OUT  <= 10'b0;
+                EX_Load_Instr_OUT = 1'b0;
+                EX_RF_Enable_OUT = 1'b0;
+                RAM_Enable_OUT = 1'b0;
+                RAM_RW_OUT = 1'b0;
+                RAM_SE_OUT = 1'b0;
+                JALR_Instr_OUT = 1'b0;
+                JAL_Instr_OUT = 1'b0;
+                AUIPC_Instr_OUT = 1'b0;
+                EX_ALU_op_OUT = 4'b0;
+                EX_shift_imm_OUT = 3'b0;
+                RAM_Size_OUT = 2'b0;
+                Comb_OpFunct_OUT = 10'b0;
             end
             
             default:
             begin
-                EX_Load_Instr_OUT <= EX_Load_Instr_IN;
-                EX_RF_Enable_OUT <= EX_RF_Enable_IN;
-                RAM_Enable_OUT <= RAM_Enable_IN;
-                RAM_RW_OUT <= RAM_RW_IN;
-                RAM_SE_OUT  <= RAM_SE_IN;
-                JALR_Instr_OUT <= JALR_Instr_IN;
-                JAL_Instr_OUT <= JAL_Instr_IN;
-                AUIPC_Instr_OUT <= AUIPC_Instr_IN;
-                EX_ALU_op_OUT <= EX_ALU_op_IN;
-                EX_shift_imm_OUT <= EX_shift_imm_IN;
-                RAM_Size_OUT  <= RAM_Size_IN;
-                Comb_OpFunct_OUT  <= Comb_OpFunct_IN;
+                EX_Load_Instr_OUT = EX_Load_Instr_IN;
+                EX_RF_Enable_OUT = EX_RF_Enable_IN;
+                RAM_Enable_OUT = RAM_Enable_IN;
+                RAM_RW_OUT = RAM_RW_IN;
+                RAM_SE_OUT = RAM_SE_IN;
+                JALR_Instr_OUT = JALR_Instr_IN;
+                JAL_Instr_OUT = JAL_Instr_IN;
+                AUIPC_Instr_OUT = AUIPC_Instr_IN;
+                EX_ALU_op_OUT = EX_ALU_op_IN;
+                EX_shift_imm_OUT = EX_shift_imm_IN;
+                RAM_Size_OUT = RAM_Size_IN;
+                Comb_OpFunct_OUT = Comb_OpFunct_IN;
             end
         endcase
     end
@@ -103,34 +103,34 @@ module EX_MEM_Register (
             case(Reset)
             1'b1: 
             begin
-                MEM_Load_Instr_OUT <= 1'b0;
-                MEM_RF_Enable_OUT <= 1'b0;
-                RAM_Enable_OUT <= 1'b0;
-                RAM_RW_OUT <= 1'b0;
-                RAM_SE_OUT  <= 1'b0;
-                JALR_Instr_OUT <= 1'b0;
-                JAL_Instr_OUT <= 1'b0;
-                AUIPC_Instr_OUT <= 1'b0;
-                MEM_ALU_op_OUT <= 4'b0;
-                MEM_shift_imm_OUT <= 3'b0;
-                RAM_Size_OUT  <= 2'b0;
-                Comb_OpFunct_OUT  <= 10'b0;
+                MEM_Load_Instr_OUT = 1'b0;
+                MEM_RF_Enable_OUT = 1'b0;
+                RAM_Enable_OUT = 1'b0;
+                RAM_RW_OUT = 1'b0;
+                RAM_SE_OUT = 1'b0;
+                JALR_Instr_OUT = 1'b0;
+                JAL_Instr_OUT = 1'b0;
+                AUIPC_Instr_OUT = 1'b0;
+                MEM_ALU_op_OUT = 4'b0;
+                MEM_shift_imm_OUT = 3'b0;
+                RAM_Size_OUT = 2'b0;
+                Comb_OpFunct_OUT = 10'b0;
             end
             
             default:
             begin
-                MEM_Load_Instr_OUT <= MEM_Load_Instr_IN;
-                MEM_RF_Enable_OUT <= MEM_RF_Enable_IN;
-                RAM_Enable_OUT <= RAM_Enable_IN;
-                RAM_RW_OUT <= RAM_RW_IN;
-                RAM_SE_OUT  <= RAM_SE_IN;
-                JALR_Instr_OUT <= JALR_Instr_IN;
-                JAL_Instr_OUT <= JAL_Instr_IN;
-                AUIPC_Instr_OUT <= AUIPC_Instr_IN;
-                MEM_ALU_op_OUT <= MEM_ALU_op_IN;
-                MEM_shift_imm_OUT <= MEM_shift_imm_IN;
-                RAM_Size_OUT  <= RAM_Size_IN;
-                Comb_OpFunct_OUT  <= Comb_OpFunct_IN;
+                MEM_Load_Instr_OUT = MEM_Load_Instr_IN;
+                MEM_RF_Enable_OUT = MEM_RF_Enable_IN;
+                RAM_Enable_OUT = RAM_Enable_IN;
+                RAM_RW_OUT = RAM_RW_IN;
+                RAM_SE_OUT = RAM_SE_IN;
+                JALR_Instr_OUT = JALR_Instr_IN;
+                JAL_Instr_OUT = JAL_Instr_IN;
+                AUIPC_Instr_OUT = AUIPC_Instr_IN;
+                MEM_ALU_op_OUT = MEM_ALU_op_IN;
+                MEM_shift_imm_OUT = MEM_shift_imm_IN;
+                RAM_Size_OUT = RAM_Size_IN;
+                Comb_OpFunct_OUT = Comb_OpFunct_IN;
             end
         endcase
     end
@@ -160,34 +160,34 @@ module MEM_WB_Register (
             case(Reset)
             1'b1: 
             begin
-                WB_Load_Instr_OUT <= 1'b0;
-                WB_RF_Enable_OUT <= 1'b0;
-                RAM_Enable_OUT <= 1'b0;
-                RAM_RW_OUT <= 1'b0;
-                RAM_SE_OUT  <= 1'b0;
-                JALR_Instr_OUT <= 1'b0;
-                JAL_Instr_OUT <= 1'b0;
-                AUIPC_Instr_OUT <= 1'b0;
-                WB_ALU_op_OUT <= 4'b0;
-                WB_shift_imm_OUT <= 3'b0;
-                RAM_Size_OUT  <= 2'b0;
-                Comb_OpFunct_OUT  <= 10'b0;
+                WB_Load_Instr_OUT = 1'b0;
+                WB_RF_Enable_OUT = 1'b0;
+                RAM_Enable_OUT = 1'b0;
+                RAM_RW_OUT = 1'b0;
+                RAM_SE_OUT  = 1'b0;
+                JALR_Instr_OUT = 1'b0;
+                JAL_Instr_OUT = 1'b0;
+                AUIPC_Instr_OUT = 1'b0;
+                WB_ALU_op_OUT = 4'b0;
+                WB_shift_imm_OUT = 3'b0;
+                RAM_Size_OUT  = 2'b0;
+                Comb_OpFunct_OUT = 10'b0;
             end
             
             default:
             begin
-                WB_Load_Instr_OUT <= WB_Load_Instr_IN;
-                WB_RF_Enable_OUT <= WB_RF_Enable_IN;
-                RAM_Enable_OUT <= RAM_Enable_IN;
-                RAM_RW_OUT <= RAM_RW_IN;
-                RAM_SE_OUT  <= RAM_SE_IN;
-                JALR_Instr_OUT <= JALR_Instr_IN;
-                JAL_Instr_OUT <= JAL_Instr_IN;
-                AUIPC_Instr_OUT <= AUIPC_Instr_IN;
-                WB_ALU_op_OUT <= WB_ALU_op_IN;
-                WB_shift_imm_OUT <= WB_shift_imm_IN;
-                RAM_Size_OUT  <= RAM_Size_IN;
-                Comb_OpFunct_OUT  <= Comb_OpFunct_IN;
+                WB_Load_Instr_OUT = WB_Load_Instr_IN;
+                WB_RF_Enable_OUT = WB_RF_Enable_IN;
+                RAM_Enable_OUT = RAM_Enable_IN;
+                RAM_RW_OUT = RAM_RW_IN;
+                RAM_SE_OUT = RAM_SE_IN;
+                JALR_Instr_OUT = JALR_Instr_IN;
+                JAL_Instr_OUT = JAL_Instr_IN;
+                AUIPC_Instr_OUT = AUIPC_Instr_IN;
+                WB_ALU_op_OUT = WB_ALU_op_IN;
+                WB_shift_imm_OUT = WB_shift_imm_IN;
+                RAM_Size_OUT = RAM_Size_IN;
+                Comb_OpFunct_OUT = Comb_OpFunct_IN;
             end
         endcase
     end
