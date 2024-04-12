@@ -19,16 +19,13 @@ module Control_Unit(
     reg [2:0] funct3;
     reg [6:0] funct7; //ADD and SUB
     reg [6:0] imm12; //SRAI and SRLI
-    reg [31:0] temp;
 
-    always@*
+    always@(Instruction)
         begin
-            temp = 32'b1;
-            temp = Instruction[31:0];
-            opcode = temp[6:0];
-            funct3 = temp[14:12];
-            funct7 = temp[31:25];
-            imm12 = temp[11:5];
+            opcode = Instruction[6:0];
+            funct3 = Instruction[14:12];
+            funct7 = Instruction[31:25];
+            imm12 = Instruction[11:5];
 
             ID_RF_enable = 1'b1;
             ID_ALU_op = 4'b0;
@@ -142,13 +139,13 @@ module Control_Unit(
                         end
                         else if (funct3 == 3'b110) 
                         begin
-                            ID_ALU_op <= 4'b1011;
+                            ID_ALU_op = 4'b1011;
                             ID_shift_imm = 3'b000;
                             $display("OR");
                         end
                         else if (funct3 == 3'b001)
                         begin
-                            ID_ALU_op <= 4'b0101;
+                            ID_ALU_op = 4'b0101;
                             ID_shift_imm = 3'b000;
                             $display("SLL");
                         end
@@ -156,20 +153,20 @@ module Control_Unit(
                         begin
                             if(funct7 == 7'b0000000) 
                             begin
-                                ID_ALU_op <= 4'b0110;
+                                ID_ALU_op = 4'b0110;
                                 ID_shift_imm = 3'b000;
                                 $display("SRL");
                             end
                             else 
                             begin
-                                ID_ALU_op <= 4'b0110;
+                                ID_ALU_op = 4'b0110;
                                 ID_shift_imm = 3'b000;
 		                        $display("SRA");
                             end
                         end
                         else 
                             begin
-                                ID_ALU_op <= 4'b1100;
+                                ID_ALU_op = 4'b1100;
                                 ID_shift_imm = 3'b000;
                                 $display("XOR");
                             end
@@ -195,7 +192,7 @@ module Control_Unit(
                         end
                         else if (funct3 == 3'b101) 
                         begin
-                            RAM_Size <= 2'b01;
+                            RAM_Size = 2'b01;
                             ID_ALU_op = 4'b0010;
                             ID_shift_imm = 3'b001;
                             $display("LHU");
@@ -262,6 +259,7 @@ module Control_Unit(
                         //Unconditional Branch Instructions
                         else if (funct3 == 3'b101) 
                         begin
+                            ID_ALU_op = 4'b0011;
                             $display("BGE");
                         end
                         else if (funct3 == 3'b110) 
@@ -274,13 +272,13 @@ module Control_Unit(
                     end
                 7'b1101111: //Unconditional Jump Instructions
                     begin
-                        JAL_Instr <= 1'b1;
+                        JAL_Instr = 1'b1;
                         $display("JAL");
                         //Aqui nos faltan XXX en el opcodefunct3
                     end
                 7'b1100111: //Unconditional Jump Instructions
                     begin
-                        JALR_Instr <= 1'b1;
+                        JALR_Instr = 1'b1;
                         ID_ALU_op = 4'b0100;
                         ID_shift_imm = 3'b001;
                         $display("JALR");
@@ -302,9 +300,9 @@ module Control_Unit(
                 7'b0000000: //NOP Instructions
                     begin
                         $display("NOP");
-                        ID_ALU_op <= 4'b0;
-                        ID_load_Instr <= 1'b0;
-                        ID_RF_enable <= 1'b0;
+                        ID_ALU_op = 4'b0;
+                        ID_load_Instr = 1'b0;
+                        ID_RF_enable = 1'b0;
                     end
                 default: //Not yet a possible instruction
                     begin
@@ -313,106 +311,3 @@ module Control_Unit(
             endcase
         end 
 endmodule
-
-
-//********************testing*************//
-
-// `timescale 1ns / 1ps
-
-// module Control_Unit_Testbench();
-
-//     reg [31:0] Instruction;
-//     wire [2:0] ID_shift_imm;
-//     wire [3:0] ID_ALU_op;
-//     wire [1:0] RAM_Size;
-//     wire [9:0] Comb_OpFunct;
-//     wire ID_load_Instr, ID_RF_enable, RAM_Enable, RAM_RW, RAM_SE, jump_instr, JALR_Instr, JAL_Instr, AUIPC_Instr;
-
-//     Control_Unit uut (
-//         .Instruction(Instruction),
-//         .ID_load_Instr(ID_load_Instr),
-//         .ID_RF_enable(ID_RF_enable),
-//         .RAM_Enable(RAM_Enable),
-//         .RAM_RW(RAM_RW),
-//         .RAM_SE(RAM_SE),
-//         .jump_instr(jump_instr),
-//         .JALR_Instr(JALR_Instr),
-//         .JAL_Instr(JAL_Instr),
-//         .AUIPC_Instr(AUIPC_Instr),
-//         .ID_shift_imm(ID_shift_imm),
-//         .ID_ALU_op(ID_ALU_op),
-//         .RAM_Size(RAM_Size),
-//         .Comb_OpFunct(Comb_OpFunct)
-//     );
-
-//     reg clk = 0;
-//     always #10 clk = ~clk;
-
-//     initial begin
-//         // Test Instructions
-//         // ADDI r5, r4, 0
-//         Instruction = 32'b00000000000000100000001010010011;
-//         #10;
-
-//         // SUB r3, r0, r3
-//         Instruction = 32'b01000000001100000000000110110011;
-//         #10;
-
-//         // LB r2, 0(r1)
-//         Instruction = 32'b00000000000000100000000110000011;
-//         #10;
-
-//         // SB r5, 6(r1)
-//         Instruction = 32'b00000000010100000000001100100011;
-//         #10;
-
-//         // BGE r3, r28, -3
-//         Instruction = 32'b11111111110000011101110111100011;
-//         #10;
-
-//         // LUI r15, #03F0A
-//         Instruction = 32'b00000011111100001010011110110111;
-//         #10;
-
-//         // JAL r20, +8
-//         Instruction = 32'b00000001000000000000001001101111;
-//         #10;
-
-//         // JALR r31, r12, +14
-//         Instruction = 32'b00000000111001100000111111100111;
-//         #10;
-
-//         // Repeat some instructions for testing
-//         // ADDI r5, r4, 0
-//         Instruction = 32'b00000000000000100000001010010011;
-//         #10;
-
-//         // SUB r3, r0, r3
-//         Instruction = 32'b01000000001100000000000110110011;
-//         #10;
-
-//         // LBU r2, 0(r1)
-//         Instruction = 32'b00000000000000100000000110000011;
-//         #10;
-
-//         // SB r5, 6(r1)
-//         Instruction = 32'b00000000010100000000001100100011;
-//         #10;
-
-//         // BGE r3, r28, -3
-//         Instruction = 32'b11111111110000011101110111100011;
-//         #10;
-
-//         // NOP
-//         Instruction = 32'b00000000000000000000000000000000;
-//         #10;
-
-//         // NOP
-//         Instruction = 32'b00000000000000000000000000000000;
-//         #10;
-
-//         // End simulation
-//         $finish;
-//     end
-
-// endmodule
