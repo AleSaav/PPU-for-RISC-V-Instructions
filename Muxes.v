@@ -47,3 +47,30 @@ module control_unit_multiplexer(
         end
     end
 endmodule
+
+//TWO TO ONE MUX
+module two_to_one_multiplexer (
+    output reg[31:0] MUX_OUT, 
+    input selector, input[31:0] A, B
+    );
+
+    always @ (selector, A, B)
+    if (selector) MUX_OUT = B;
+    else MUX_OUT = A;
+endmodule
+
+//FOUR TO ONE MUX
+module four_to_one_multiplexer (
+    output reg [31:0] MUX_OUT, 
+    input [1:0] selector,
+    input [31:0] A, B, C, D
+    );
+
+    always @ (selector, A, B, C, D)
+    case (selector)
+        2'b00: MUX_OUT = A;
+        2'b01: MUX_OUT = B;
+        2'b10: MUX_OUT = C;
+        2'b11: MUX_OUT = D;
+    endcase
+endmodule
