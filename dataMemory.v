@@ -2,10 +2,10 @@ module ram512x8 (
     output reg [31:0] DataOut, 
     input Enable, 
     input ReadWrite, 
+    input SEDM,
     input [8:0] Address, 
     input [31:0] DataIn, 
-    input [1:0] Size, 
-    input SignExtend
+    input [1:0] Size
 );
     reg [7:0] Mem[0:511]; // 512 localizaciones de 8 bits
 
