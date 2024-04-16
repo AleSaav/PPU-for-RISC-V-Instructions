@@ -6,7 +6,15 @@
 `include "Adder_Plus4.v"
 `include "Muxes.v"
 `include "HelpersConcatenateOR.v"
-`include "ConditionHandler"
+`include "ConditionHandler.v"
+`include "alu.v"
+`include "secondOperand.v"
+`include "RegisterFileModule.v"
+`include "signalLogicBox.v"
+`include "DataMemory.v"
+`include "Hazard_Fowarding_Unit.v"
+`include "targetAddressAdder.v"
+`include "ram.v"
 
 module PPU ();
 
@@ -177,13 +185,36 @@ wire PC_E;
 wire IF_ID_E;
 wire CUMUX_E;
 
+//Reset Pipeline
+wire Inconditional_Reset;
+
+//SecondOperand
+wire [31:0] NSO;
+
+//Alu
+wire [31:0] Alu_A;
+wire [31:0] Alu_Out;
+wire C;
+wire V;
+
+//Register File wires
+wire [31:0] PA;
+wire [31:0] PB;
+
 //Signal Logic Box
 wire [1:0] signalLogicBox_OUT;
 wire reset_IF_ID;
 wire reset_ID_EX;
+wire PC_Mux;
 
-//Reset Pipeline
-wire Inconditional_Reset;
+//Wires for immediate value mux
+wire [31:0] immediate_value;
+
+//Logic Box Mux
+wire [31:0] LogicMuxOut;
+
+//New PC Value Mux
+wire [31:0] newPCValue;
 
 /*********** Iterations Of Modules ***********/
 //PC_Register
@@ -228,6 +259,122 @@ Condition_Handler CH(
     .Z(Z), 
     .N(N)
 );
+
+ram512x8 DM(
+    .DataOut(DataOutDM), 
+    .Enable(WB_RAM_Enable), 
+    .ReadWrite(WB_RAM_RW), 
+    .Address(ALU_Mux_MEM[31:22]), 
+    .DataIn(PB_MEM), 
+    .Size(Mem_RAM_Size),
+    .SEDM(Mem_RAM_SE)
+);
+
+secondOperandHandler SOH(
+    .PB(PB_MUX_EX),
+    .imm12_I(Imm12_EX),
+    .imm12_S(imm_s),
+    .imm20(Imm20_EX),
+    .PC(PCOG_EX),
+    .S(EX_shift_imm),
+    .N(NSO)
+);
+
+two_to_one_multiplexer PreMuxAlu(
+    .MUX_OUT(Alu_A), 
+    .selector(EX_AUIPC_Instr), 
+    .A(PA_MUX_EX),
+    .B(PCOG_EX)
+);
+
+alu Alu(
+    //input
+    .A(Alu_A),
+    .B(NSO),
+    .Op(EX_ALU_op),
+
+    //output
+    .Out(Alu_Out),
+    .Z(Z),
+    .N(N),
+    .C(C),
+    .V(V)
+);
+
+two_to_one_multiplexer PostMuxAlu(
+    .MUX_OUT(ALU_Mux_MEM), 
+    .selector(OR), 
+    .A(Alu_Out),
+    .B(PCOG_EX)
+);
+
+registerFile RF(
+    //Register File outputs
+    .PA(PA),
+    .PB(PB),
+
+    //Register File inputs
+    .RW(RD_END),
+    .RA(RS1), 
+    .RB(RS2),
+    .enable(WBOut_RF_enable), 
+    .clk(clk),
+    .PW(ALU_Mux_END)
+);
+
+signalLogicBox logigBox(
+    //Inputs
+    .JALR_Instr(EX_JALR_Instr),
+    .Conditional(conditionalS),
+    .JAL_Instr(Mux_JAL_Instr),
+
+    //Outputs
+    .signalLogicBox_OUT(signalLogicBox_OUT),
+    .reset_IF_ID(reset_IF_ID),
+    .reset_ID_EX(reset_ID_EX),
+    .PC_Mux(PC_Mux)
+);
+
+two_to_one_multiplexer MemMux(
+    .MUX_OUT(ALU_Mux_WB), 
+    .selector(Mem_load_Instr), 
+    .A(DataOutDM),
+    .B(ALU_Mux_MEM)
+);
+
+//Immediate value MUX
+two_to_one_multiplexer IMM_MUX(
+    .MUX_OUT(immediate_value), 
+    .selector(Mux_JAL_Instr), 
+    .A(imm_b),
+    .B(immb_j)
+);
+
+targetAddress TA4(
+    .targetAddress_OUT(TA), 
+    .A(immediate_value),
+    .B(PCOGOut)
+);
+
+four_to_one_multiplexer logigBoxMux(
+
+    //Inputs
+    .A(TA_EX), //Conditional
+    .B(Alu_Out), //JalR
+    .C(TA), //Jal
+    .D(32'b0), //Null
+    .selector(signalLogicBox_OUT),
+    .MUX_OUT(LogicMuxOut)
+);
+
+two_to_one_multiplexer newPC(
+
+    .A(LogicMuxOut),
+    .B(PC_In),
+    .selector(PC_Mux),
+    .MUX_OUT(newPCValue) // new PC value
+);
+
 /*********** Stages ***********/
 
 
@@ -241,7 +388,7 @@ IF_ID_Register IF_ID(
     .Reset(GlobalReset), 
     .resetIF(resetIF),
     .clk(clk),
-    .Inconditional_Reset(),
+    .Inconditional_Reset(reset_IF_ID), //INCONDITIONAL RESET
 
     //IF_ID_Register Output
     .I31_I0(Instruction),
@@ -290,6 +437,7 @@ ID_EX_Register ID_EX(
     .Imm12_4_0_IN(Imm12_4_0),
     .Imm20_IN(Imm20),
     .RD_IN(RD),
+    .Conditional_Reset(reset_ID_EX), //CONDITIONAL RESET
     
     //ID_EX_Register Outputs
     .EX_Load_Instr_OUT(EX_load_Instr), 
@@ -463,17 +611,6 @@ control_unit_multiplexer MuxCU(
         .RAM_Size_OUT(Mux_RAM_Size),
         .Comb_OpFunct_OUT(Mux_Comb_OpFunct)
 );
-
-ram512x8 DM(
-    .DataOut(DataOutDM), 
-    .Enable(WB_RAM_Enable), 
-    .ReadWrite(WB_RAM_RW), 
-    .Address(AddressDM), 
-    .DataIn(PB_MEM), 
-    .Size(Mem_RAM_Size).
-    .SEDM(Mem_RAM_SE)
-);
-
 
 /*----------| PRECHARGING STAGE |----------*/
 

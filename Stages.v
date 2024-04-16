@@ -74,7 +74,7 @@ endmodule
 module ID_EX_Register (
     //Pipeline Register Input Signals
     input EX_Load_Instr_IN, EX_RF_Enable_IN, RAM_Enable_IN, RAM_RW_IN, RAM_SE_IN,
-    input  Reset, clk, Inconditional_Reset //Reset Signal and Clock Signal
+    input  Reset, clk, Conditional_Reset //Reset Signal and Clock Signal
     input JALR_Instr_IN, JAL_Instr_IN, AUIPC_Instr_IN,
     input [3:0] EX_ALU_op_IN,
     input [2:0] EX_shift_imm_IN,
@@ -240,7 +240,7 @@ module MEM_WB_Register (
     input [2:0] WB_shift_imm_IN,
     input [1:0] RAM_Size_IN,
     input [9:0] Comb_OpFunct_IN,
-    input data_Mem_MUX_IN, 
+    input [31:0] data_Mem_MUX_IN, 
     input [4:0] RD_IN, 
 
     //Pipeline Register Output Signals 
@@ -321,9 +321,9 @@ module MEM_WB_Register (
             
             default:
             begin
-                WB_RF_Enable_OUT <= WB_RF_Enable_IN;
-                data_Mem_MUX_OUT <= data_Mem_MUX_OUT;
-                RD_OUT <= RD_IN;
+            WB_RF_Enable_OUT <= WB_RF_Enable_IN;
+            data_Mem_MUX_OUT <= data_Mem_MUX_OUT;
+            RD_OUT <= RD_IN;
             end
         endcase
     end

@@ -31,6 +31,7 @@ always @* begin
                 if(N == 0) conditionalS <= 1'b1;
                 else conditionalS <= 1'b0;
             end
+        end
         10'1111100011: begin // greater than BGEU
             begin
                 if((Z == 1) || (N == 0)) conditionalS <= 1'b1;
@@ -39,5 +40,4 @@ always @* begin
         end
     endcase
 end
-
 endmodule
