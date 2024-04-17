@@ -186,64 +186,64 @@ endmodule
 
 // //********************************* Start Testing *************************************//
 
-//testbench for register file
-module register_file_tb;
-    // Inputs
-    reg clk;
-    reg enable; // Add enable input
-    reg [4:0] RA, RB, RW;
-    reg [31:0] PW;
+// //testbench for register file
+// module register_file_tb;
+//     // Inputs
+//     reg clk;
+//     reg enable; // Add enable input
+//     reg [4:0] RA, RB, RW;
+//     reg [31:0] PW;
 
-    // Outputs
-    wire [31:0] PA, PB;
+//     // Outputs
+//     wire [31:0] PA, PB;
 
-    // Instantiate the Register File
-    registerFile uut (
-        .clk(clk), 
-        .RW(RW), 
-        .RA(RA), 
-        .RB(RB), 
-        .enable(enable), // Connect enable input
-        .PW(PW), 
-        .PA(PA), 
-        .PB(PB)
-    );
+//     // Instantiate the Register File
+//     registerFile uut (
+//         .clk(clk), 
+//         .RW(RW), 
+//         .RA(RA), 
+//         .RB(RB), 
+//         .enable(enable), // Connect enable input
+//         .PW(PW), 
+//         .PA(PA), 
+//         .PB(PB)
+//     );
 
 
-    initial begin
-        clk = 0;
-        enable = 1; //set enable to 1
-        forever #2 clk = ~clk; 
-    end
+//     initial begin
+//         clk = 0;
+//         enable = 1; //set enable to 1
+//         forever #2 clk = ~clk; 
+//     end
 
-    // Monitor
-    initial begin
-        $monitor("| Clk: %b | RW: %d | RA: %d | RB: %d | PW: %d | PA: %d | PB: %d |", 
-                 clk, RW, RA, RB, PW, PA, PB);
-    end
+//     // Monitor
+//     initial begin
+//         $monitor("| Clk: %b | RW: %d | RA: %d | RB: %d | PW: %d | PA: %d | PB: %d |", 
+//                  clk, RW, RA, RB, PW, PA, PB);
+//     end
 
-    // Test Cases
-    initial begin
-        // Initialization
-        PW = 32'b10100; //initial value of 20
-        RW = 5'b0; //initial value of 0
-        RA = 5'b0; //initial value of 0
-        RB = 5'b11111; //initial value of 31
-        #3; //delay
+//     // Test Cases
+//     initial begin
+//         // Initialization
+//         PW = 32'b10100; //initial value of 20
+//         RW = 5'b0; //initial value of 0
+//         RA = 5'b0; //initial value of 0
+//         RB = 5'b11111; //initial value of 31
+//         #3; //delay
 
-        // Test cycle
-        repeat (31) begin
-            PW = PW + 1; 
-            RW = RW + 1; 
-            RA = RA + 1; 
-            RB = RB + 1;
-            #4; //delay
-        end
-    end
-        // Finish simulation
-        initial
-        #128 $finish; //ending the simulation so the loop doesnt stay infinitely running 
-endmodule
+//         // Test cycle
+//         repeat (31) begin
+//             PW = PW + 1; 
+//             RW = RW + 1; 
+//             RA = RA + 1; 
+//             RB = RB + 1;
+//             #4; //delay
+//         end
+//     end
+//         // Finish simulation
+//         initial
+//         #128 $finish; //ending the simulation so the loop doesnt stay infinitely running 
+// endmodule
 
 
 

@@ -20,7 +20,7 @@ always @* begin
                 else conditionalS <= 1'b0;
             end
         end 
-        10'1011100011: begin //greater or equal than zero BGE
+        10'b1011100011: begin //greater or equal than zero BGE
             begin
                 if((Z == 1) || (N == 0)) conditionalS <= 1'b1;
                 else conditionalS <= 1'b0;
@@ -32,7 +32,7 @@ always @* begin
                 else conditionalS <= 1'b0;
             end
         end
-        10'1111100011: begin // greater than BGEU
+        10'b1111100011: begin // greater than BGEU
             begin
                 if((Z == 1) || (N == 0)) conditionalS <= 1'b1;
                 else conditionalS <= 1'b0;

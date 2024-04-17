@@ -19,7 +19,6 @@
 module PPU ();
 
 //Mux enable
-reg S;
 reg GlobalReset;
 reg clk;
 wire [31:0] dataOut;
@@ -50,6 +49,8 @@ wire [11:0] Imm12;
 
 //Input Stage EX
 wire [31:0] Mux_EX_Out;
+wire [31:0] PA_MUX;
+wire [31:0] PB_MUX;
 
 //Output Stage EX
 wire [31:0] TA_EX;
@@ -160,8 +161,8 @@ wire [31:0] Adder_Out;
 wire [8:0] A;
 
 //Concatenate B and J
-wire [14:0] imm_b;
-wire [14:0] immb_j;
+wire [31:0] imm_b;
+wire [31:0] immb_j;
 
 //Concatenate S
 wire [11:0] imm_s;
@@ -216,6 +217,18 @@ wire [31:0] LogicMuxOut;
 //New PC Value Mux
 wire [31:0] newPCValue;
 
+//Hazard Forwarding Unit wires
+wire [1:0] MUX_PA_enable;
+wire [1:0] MUX_PB_enable;
+wire PC_enable;
+wire IF_ID_enable; 
+wire CUMUX_enable;
+
+//Target Address Adder
+wire [31:0] TA;
+
+//Mux
+
 /*********** Iterations Of Modules ***********/
 //PC_Register
 PC_Register PC(
@@ -247,7 +260,7 @@ concatenateImmS concatenateImmS(
     .ImmS(imm_s)
 );
 
-concatenateJ ConcatenateJ(
+ORJumps OREX(
     .OR(OR),
     .JAL(EX_JAL_Instr),
     .JALR(EX_JALR_Instr)
@@ -264,7 +277,7 @@ ram512x8 DM(
     .DataOut(DataOutDM), 
     .Enable(WB_RAM_Enable), 
     .ReadWrite(WB_RAM_RW), 
-    .Address(ALU_Mux_MEM[31:22]), 
+    .Address(ALU_Mux_MEM[31:23]), 
     .DataIn(PB_MEM), 
     .Size(Mem_RAM_Size),
     .SEDM(Mem_RAM_SE)
@@ -368,13 +381,46 @@ four_to_one_multiplexer logigBoxMux(
 );
 
 two_to_one_multiplexer newPC(
-
     .A(LogicMuxOut),
     .B(PC_In),
     .selector(PC_Mux),
     .MUX_OUT(newPCValue) // new PC value
 );
 
+four_to_one_multiplexer PAMux(
+    .MUX_OUT(PA_MUX), 
+    .selector(MUX_PA_enable),
+    .A(PA), 
+    .B(Alu_Out), 
+    .C(ALU_Mux_WB), 
+    .D(ALU_Mux_END)
+);
+
+four_to_one_multiplexer PBMux(
+    .MUX_OUT(PB_MUX), 
+    .selector(MUX_PB_enable),
+    .A(PB), 
+    .B(Alu_Out), 
+    .C(ALU_Mux_WB), 
+    .D(ALU_Mux_END)
+);
+
+Hazard_Fowarding_Unit HFU(
+.MUX_PA_E(MUX_PA_enable), 
+.MUX_PB_E(MUX_PB_enable),
+.PC_E(PC_enable), 
+.IF_ID_E(IF_ID_enable), 
+.CUMUX_E(CUMUX_enable),
+.MEM_RF_E(Mem_RF_enable), 
+.EX_RF_E(EX_RF_enable), 
+.WB_RF_E(WBOut_RF_enable), 
+.ID_load_instr(EX_load_Instr), 
+.ID_RS1(RS1), 
+.ID_RS2(RS2),
+.RD_EX(RD_EX), 
+.RD_MEM(RD_MEM), 
+.RD_WB(RD_END)
+);
 /*********** Stages ***********/
 
 
@@ -386,7 +432,6 @@ IF_ID_Register IF_ID(
     .PCOG(PC_Out),
     .PC4(Adder_Out),
     .Reset(GlobalReset), 
-    .resetIF(resetIF),
     .clk(clk),
     .Inconditional_Reset(reset_IF_ID), //INCONDITIONAL RESET
 
@@ -431,12 +476,12 @@ ID_EX_Register ID_EX(
     .PA_MUX_IN(PA_MUX),
     .PCOG_IN(PCOGOut),
     .PC4_IN(PC4Out),
-    .PA_MUX_IN(PA_MUX),
+    .PB_MUX_IN(PB_MUX),
     .Imm12_IN(Imm12),
     .Imm12_11_5_IN(Imm12_11_5),
     .Imm12_4_0_IN(Imm12_4_0),
     .Imm20_IN(Imm20),
-    .RD_IN(RD),
+    .RD_IN(rd),
     .Conditional_Reset(reset_ID_EX), //CONDITIONAL RESET
     
     //ID_EX_Register Outputs
@@ -483,7 +528,7 @@ EX_MEM_Register EX_MEM(
     .clk(clk), 
     .ALU_Mux_IN(Mux_EX_Out), 
     .PB_IN(PB_MUX_EX), 
-    .RD_IN(RD_EX)
+    .RD_IN(RD_EX),
 
     //EX_MEM_Register Outputs
     .MEM_Load_Instr_OUT(Mem_load_Instr), 
@@ -540,7 +585,7 @@ MEM_WB_Register MEM_WB(
     .RD_OUT(RD_WB)
 );
 
-MEM_WB_Register WB (
+WB_Out_Register WB (
     // MEM_WB_Register Inputs
     .WB_RF_Enable_IN(WB_RF_enable),
     .Reset(GlobalReset), 
@@ -584,7 +629,7 @@ Control_Unit CU(
 );
 
 control_unit_multiplexer MuxCU(
-        .selector(S),
+        .selector(CUMUX_enable),
         .ID_Load_Instr_IN(load_Instr), 
         .ID_RF_Enable_IN(RF_enable), 
         .RAM_Enable_IN(RAM_Enable), 
@@ -642,8 +687,6 @@ end
 
 initial begin
     LE = 1'b1;
-    S = 1'b0; 
-    #40 S = 1'b1;
 end
 
 initial begin
@@ -651,7 +694,7 @@ initial begin
 end
 
 initial begin
-    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nOutput EX PIPELINE\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nShift_imm_IN %b\nALU_op_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nOUTPUT PIPELINE MEM\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nOUTPUT PIPELINE WB\nRF_enable_IN %b\n\n-------------------------------------------------------------------------\n", 
+    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nOutput EX PIPELINE\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nShift_imm_IN %b\nALU_op_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nOUTPUT PIPELINE MEM\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nOUTPUT PIPELINE WB\nRF_enable_IN %b\n\nCombMem %b\n\nCombWB %b\n\n-------------------------------------------------------------------------\n", 
     PC_Out, 
     load_Instr,
     RF_enable,
@@ -683,7 +726,9 @@ initial begin
     Mem_RAM_RW,
     Mem_RAM_SE,
     Mem_RAM_Size,
-    WB_RF_enable
+    WB_RF_enable,
+    Mem_Comb_OpFunct,
+    WB_Comb_OpFunct
     );
 end
 endmodule

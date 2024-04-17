@@ -2,7 +2,7 @@
 module IF_ID_Register(
     input [31:0] Instuction_Mem_OUT, //32-bit
     input  LE, Reset, clk, //Load Enable, Reset signal and Clock Signal
-    input resetIF,
+    input Inconditional_Reset,
     input [31:0] PCOG, PC4,
     output reg [31:0] I31_I0, //para el control unit
     output reg [5:0] I25_30,
@@ -23,7 +23,7 @@ module IF_ID_Register(
 
     always @(posedge clk) 
     begin
-        case (Reset || resetIF)
+        case (Reset || Inconditional_Reset)
         1'b1: 
         begin // Si la senal de Reset <= 1, se da 
             I31_I0 <= 32'b0;
@@ -74,7 +74,7 @@ endmodule
 module ID_EX_Register (
     //Pipeline Register Input Signals
     input EX_Load_Instr_IN, EX_RF_Enable_IN, RAM_Enable_IN, RAM_RW_IN, RAM_SE_IN,
-    input  Reset, clk, Conditional_Reset //Reset Signal and Clock Signal
+    input  Reset, clk, Conditional_Reset, //Reset Signal and Clock Signal
     input JALR_Instr_IN, JAL_Instr_IN, AUIPC_Instr_IN,
     input [3:0] EX_ALU_op_IN,
     input [2:0] EX_shift_imm_IN,
@@ -112,7 +112,7 @@ module ID_EX_Register (
 
     always @ (posedge clk) 
         begin 
-            case(Reset || Inconditional_Reset)
+            case(Reset || Conditional_Reset)
             1'b1: 
             begin
                 EX_Load_Instr_OUT <= 1'b0;
@@ -296,11 +296,11 @@ module MEM_WB_Register (
     end
 endmodule
 
-module MEM_WB_Register (
+module WB_Out_Register (
     //Pipeline Register Input Signals
     input WB_RF_Enable_IN,
     input Reset, clk, //Reset Signal and Clock Signal
-    input data_Mem_MUX_IN, 
+    input [31:0] data_Mem_MUX_IN, 
     input [4:0] RD_IN, 
 
     //Pipeline Register Output Signals 

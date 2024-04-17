@@ -4,7 +4,7 @@ module concatenateB (
     );
 
     always @ (*) begin
-        Immb_BSE <= {{19{Instr[31]}}, Instr[31], Instr[7], Instr[30:25], Instr[11:8], 0};
+        Immb_BSE <= {{19{Instr[31]}}, Instr[31], Instr[7], Instr[30:25], Instr[11:8], 1'b0};
     end
 endmodule
 
@@ -14,14 +14,14 @@ module concatenateJ (
     );
 
     always @ (*) begin
-        Immb_JSE <= {{12{Instr[31]}}, Instr[31], Instr[19:12], Instr[20], Instr[30:21], 0};
+        Immb_JSE <= {{12{Instr[31]}}, Instr[31], Instr[19:12], Instr[20], Instr[30:21], 1'b0};
     end
 endmodule
 
 module concatenateImmS (
     output reg [11:0] ImmS, //Concatenate number
-    input reg [6:0] Imm12_11_5_OUT,
-    input reg [4:0] Imm12_4_0_OUT 
+    input [6:0] Imm12_11_5_OUT,
+    input [4:0] Imm12_4_0_OUT 
     );
 
     always @ (*) begin
@@ -31,7 +31,7 @@ endmodule
 
 module ORJumps (
     output reg OR, //Output Signal
-    input Jal, JALR //Jump signals
+    input JAL, JALR //Jump signals
     );
 
     always @ (*) begin

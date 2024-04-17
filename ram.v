@@ -44,9 +44,9 @@ module ram512x8 (
         end else if (!ReadWrite && Enable) begin // Read operation
             case (Size)
                 2'b00: // Byte
-                    DataOut = SignExtend ? SignExtender(Mem[Address], 16'b0, 1, Mem[Address][7]) : {24'b0, Mem[Address]};
+                    DataOut = SEDM ? SignExtender(Mem[Address], 16'b0, 1, Mem[Address][7]) : {24'b0, Mem[Address]};
                 2'b01: // Halfword
-                    DataOut = SignExtend ? SignExtender(Mem[Address+1], {Mem[Address+1], Mem[Address]}, 0, Mem[Address+1][7]) : {16'b0, Mem[Address+1], Mem[Address]};
+                    DataOut = SEDM ? SignExtender(Mem[Address+1], {Mem[Address+1], Mem[Address]}, 0, Mem[Address+1][7]) : {16'b0, Mem[Address+1], Mem[Address]};
                 2'b10, 2'b11: // Word
                     DataOut = {Mem[Address+3], Mem[Address+2], Mem[Address+1], Mem[Address]};
             endcase
