@@ -384,7 +384,7 @@ two_to_one_multiplexer newPC(
     .A(Adder_Out),
     .B(LogicMuxOut),
     .selector(PC_Mux),
-    .MUX_OUT(newPCValue) // new PC value
+    .MUX_OUT(PC_In) // new PC value
 );
 
 four_to_one_multiplexer PAMux(
@@ -686,45 +686,46 @@ initial begin
 end
 
 initial begin
-    #48 $finish; //ending the simulation so the loop doesnt stay infinitely running
+    #60 $finish; //ending the simulation so the loop doesnt stay infinitely running
 end
 
 initial begin
-    $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nOutput EX PIPELINE\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nShift_imm_IN %b\nALU_op_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nOUTPUT PIPELINE MEM\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nOUTPUT PIPELINE WB\nRF_enable_IN %b\n\nCombMem %b\n\nCombWB %b\n\n-------------------------------------------------------------------------\n", 
-    PC_Out, 
-    load_Instr,
-    RF_enable,
-    RAM_Enable,
-    RAM_RW,
-    RAM_SE,
-    JALR_Instr,
-    JAL_Instr,
-    AUIPC_Instr,
-    shift_imm,
-    ALU_op,
-    RAM_Size,
-    Comb_OpFunct,
-    EX_load_Instr,
-    EX_RF_enable,
-    EX_RAM_Enable,
-    EX_RAM_RW,
-    EX_RAM_SE,
-    EX_JALR_Instr,
-    EX_JAL_Instr,
-    EX_AUIPC_Instr,
-    EX_shift_imm,
-    EX_ALU_op,
-    EX_RAM_Size,
-    EX_Comb_OpFunct,
-    Mem_load_Instr,
-    Mem_RF_enable,
-    Mem_RAM_Enable,
-    Mem_RAM_RW,
-    Mem_RAM_SE,
-    Mem_RAM_Size,
-    WB_RF_enable,
-    Mem_Comb_OpFunct,
-    WB_Comb_OpFunct
-    );
+    // $monitor("PC %d\n\nControl Unit Outputs: \nID_load_Instr %b\nID_RF_enable %b\nRAM_Enable %b\nRAM_RW %b\nRAM_SE %b\nJALR_Instr %b\nJAL_Instr %b\nAUIPC_Instr %b\nID_shift_imm %b\nID_ALU_op %b\nRAM_Size %b\nComb_OpFunct %b\n\n\nOutput EX PIPELINE\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nJALR_Instr_IN %b\nJAL_Instr_IN %b\nAUIPC_Instr_IN %b\nShift_imm_IN %b\nALU_op_IN %b\nRAM_Size_IN %b\nComb_OpFunct_IN %b\n\n\nOUTPUT PIPELINE MEM\nLoad_Instr_IN %b\nRF_enable_IN %b\nRAM_Enable_IN %b\nRAM_RW_IN %b\nRAM_SE_IN %b\nRAM_Size_IN %b\n\n\nOUTPUT PIPELINE WB\nRF_enable_IN %b\n\n-------------------------------------------------------------------------\n", 
+    // PC_Out, 
+    // load_Instr,
+    // RF_enable,
+    // RAM_Enable,
+    // RAM_RW,
+    // RAM_SE,
+    // JALR_Instr,
+    // JAL_Instr,
+    // AUIPC_Instr,
+    // shift_imm,
+    // ALU_op,
+    // RAM_Size,
+    // Comb_OpFunct,
+    // EX_load_Instr,
+    // EX_RF_enable,
+    // EX_RAM_Enable,
+    // EX_RAM_RW,
+    // EX_RAM_SE,
+    // EX_JALR_Instr,
+    // EX_JAL_Instr,
+    // EX_AUIPC_Instr,
+    // EX_shift_imm,
+    // EX_ALU_op,
+    // EX_RAM_Size,
+    // EX_Comb_OpFunct,
+    // Mem_load_Instr,
+    // Mem_RF_enable,
+    // Mem_RAM_Enable,
+    // Mem_RAM_RW,
+    // Mem_RAM_SE,
+    // Mem_RAM_Size,
+    // WB_RF_enable
+    // );
+
+    $monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\n PC = %d \nr1 = %d r2 =%d r3 = %d r5 = %d  r6 = %d \n \n", $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q5, RF.Q6);
+    //$monitor("PC %d", PC_Out);
 end
 endmodule

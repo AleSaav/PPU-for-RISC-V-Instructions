@@ -17,33 +17,33 @@ module control_unit_multiplexer(
 
     always @* begin
         if(selector == 1'b0) begin // Pass Control Unit values when selector is 0
-            ID_Load_Instr_OUT = ID_Load_Instr_IN;
-            ID_RF_Enable_OUT = ID_RF_Enable_IN;
-            RAM_Enable_OUT = RAM_Enable_IN;
-            RAM_RW_OUT = RAM_RW_IN;
-            RAM_SE_OUT = RAM_SE_IN;
-            JALR_Instr_OUT = JALR_Instr_IN;
-            JAL_Instr_OUT = JAL_Instr_IN;
-            AUIPC_Instr_OUT = AUIPC_Instr_IN;
-            ID_ALU_op_OUT = ID_ALU_op_IN;
-            ID_shift_imm_OUT = ID_shift_imm_IN;
-            RAM_Size_OUT = RAM_Size_IN;
-            Comb_OpFunct_OUT = Comb_OpFunct_IN;
+            ID_Load_Instr_OUT <= ID_Load_Instr_IN;
+            ID_RF_Enable_OUT <= ID_RF_Enable_IN;
+            RAM_Enable_OUT <= RAM_Enable_IN;
+            RAM_RW_OUT <= RAM_RW_IN;
+            RAM_SE_OUT <= RAM_SE_IN;
+            JALR_Instr_OUT <= JALR_Instr_IN;
+            JAL_Instr_OUT <= JAL_Instr_IN;
+            AUIPC_Instr_OUT <= AUIPC_Instr_IN;
+            ID_ALU_op_OUT <= ID_ALU_op_IN;
+            ID_shift_imm_OUT <= ID_shift_imm_IN;
+            RAM_Size_OUT <= RAM_Size_IN;
+            Comb_OpFunct_OUT <= Comb_OpFunct_IN;
         end 
         else begin
-            ID_Load_Instr_OUT = 1'b0;
-            ID_RF_Enable_OUT = 1'b0;
-            RAM_Enable_OUT = 1'b0;
-            RAM_RW_OUT = 1'b0;
-            RAM_SE_OUT = 1'b0;
-            JALR_Instr_OUT = 1'b0;
-            JAL_Instr_OUT = 1'b0;
-            AUIPC_Instr_OUT = 1'b0;
+            ID_Load_Instr_OUT <= 1'b0;
+            ID_RF_Enable_OUT <= 1'b0;
+            RAM_Enable_OUT <= 1'b0;
+            RAM_RW_OUT <= 1'b0;
+            RAM_SE_OUT <= 1'b0;
+            JALR_Instr_OUT <= 1'b0;
+            JAL_Instr_OUT <= 1'b0;
+            AUIPC_Instr_OUT <= 1'b0;
 
-            ID_ALU_op_OUT = 4'b0;
-            ID_shift_imm_OUT = 3'b0;
-            RAM_Size_OUT = 2'b0;
-            Comb_OpFunct_OUT = 10'b0;
+            ID_ALU_op_OUT <= 4'b0;
+            ID_shift_imm_OUT <= 3'b0;
+            RAM_Size_OUT <= 2'b0;
+            Comb_OpFunct_OUT <= 10'b0;
         end
     end
 endmodule

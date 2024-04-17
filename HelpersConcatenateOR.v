@@ -4,7 +4,7 @@ module concatenateB (
     );
 
     always @ (*) begin
-        Immb_BSE <= {{19{Instr[31]}}, Instr[31], Instr[7], Instr[30:25], Instr[11:8], 1'b0};
+        Immb_BSE = {{19{Instr[31]}}, Instr[31], Instr[7], Instr[30:25], Instr[11:8], 1'b0};
     end
 endmodule
 
@@ -14,7 +14,7 @@ module concatenateJ (
     );
 
     always @ (*) begin
-        Immb_JSE <= {{12{Instr[31]}}, Instr[31], Instr[19:12], Instr[20], Instr[30:21], 1'b0};
+        Immb_JSE = {{12{Instr[31]}}, Instr[31], Instr[19:12], Instr[20], Instr[30:21], 1'b0};
     end
 endmodule
 
@@ -25,7 +25,7 @@ module concatenateImmS (
     );
 
     always @ (*) begin
-        ImmS <= {Imm12_4_0_OUT, Imm12_11_5_OUT};
+        ImmS = {Imm12_4_0_OUT, Imm12_11_5_OUT};
     end
 endmodule
 
