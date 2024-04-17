@@ -232,7 +232,7 @@ wire [31:0] TA;
 /*********** Iterations Of Modules ***********/
 //PC_Register
 PC_Register PC(
-    .LE(LE), 
+    .LE(PC_enable), 
     .Reset(GlobalReset), 
     .clk(clk), 
     .PC_In(PC_In), //PC_Register Inputs
@@ -240,7 +240,7 @@ PC_Register PC(
 );
 
 Adder_Plus4 add(
-    .Adder_OUT(PC_In),
+    .Adder_OUT(Adder_Out),
     .A(PC_Out)
 );
 
@@ -315,10 +315,10 @@ alu Alu(
 );
 
 two_to_one_multiplexer PostMuxAlu(
-    .MUX_OUT(ALU_Mux_MEM), 
+    .MUX_OUT(Mux_EX_Out), 
     .selector(OR), 
     .A(Alu_Out),
-    .B(PCOG_EX)
+    .B(PC4_EX)
 );
 
 registerFile RF(
@@ -381,8 +381,8 @@ four_to_one_multiplexer logigBoxMux(
 );
 
 two_to_one_multiplexer newPC(
-    .A(LogicMuxOut),
-    .B(PC_In),
+    .A(Adder_Out),
+    .B(LogicMuxOut),
     .selector(PC_Mux),
     .MUX_OUT(newPCValue) // new PC value
 );
@@ -406,20 +406,20 @@ four_to_one_multiplexer PBMux(
 );
 
 Hazard_Fowarding_Unit HFU(
-.MUX_PA_E(MUX_PA_enable), 
-.MUX_PB_E(MUX_PB_enable),
-.PC_E(PC_enable), 
-.IF_ID_E(IF_ID_enable), 
-.CUMUX_E(CUMUX_enable),
-.MEM_RF_E(Mem_RF_enable), 
-.EX_RF_E(EX_RF_enable), 
-.WB_RF_E(WBOut_RF_enable), 
-.ID_load_instr(EX_load_Instr), 
-.ID_RS1(RS1), 
-.ID_RS2(RS2),
-.RD_EX(RD_EX), 
-.RD_MEM(RD_MEM), 
-.RD_WB(RD_END)
+    .MUX_PA_E(MUX_PA_enable), 
+    .MUX_PB_E(MUX_PB_enable),
+    .PC_E(PC_enable), 
+    .IF_ID_E(IF_ID_enable), 
+    .CUMUX_E(CUMUX_enable),
+    .MEM_RF_E(Mem_RF_enable), 
+    .EX_RF_E(EX_RF_enable), 
+    .WB_RF_E(WBOut_RF_enable), 
+    .ID_load_instr(EX_load_Instr), 
+    .ID_RS1(RS1), 
+    .ID_RS2(RS2),
+    .RD_EX(RD_EX), 
+    .RD_MEM(RD_MEM), 
+    .RD_WB(RD_END)
 );
 /*********** Stages ***********/
 
@@ -428,7 +428,7 @@ Hazard_Fowarding_Unit HFU(
 IF_ID_Register IF_ID(
     //IF_ID_Register Inputs
     .Instuction_Mem_OUT(dataOut), 
-    .LE(LE),
+    .LE(IF_ID_enable),
     .PCOG(PC_Out),
     .PC4(Adder_Out),
     .Reset(GlobalReset), 
@@ -683,10 +683,6 @@ end
 initial begin
     GlobalReset = 1'b1;
     #3 GlobalReset = 1'b0;
-end
-
-initial begin
-    LE = 1'b1;
 end
 
 initial begin
