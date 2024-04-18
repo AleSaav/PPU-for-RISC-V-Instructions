@@ -59,6 +59,20 @@ module two_to_one_multiplexer (
     else MUX_OUT = A;
 endmodule
 
+module MEM_multiplexer (
+    output reg[31:0] MUX_OUT, 
+    input selector, input[31:0] A, B
+    );
+
+    always @ (selector, A, B)
+    begin
+    if (selector == 1'b1) MUX_OUT <= B;
+    else MUX_OUT <= A;
+    
+    $display("A=%d , B=%d , MUX_OUT=%d", A, B, MUX_OUT);
+    end
+endmodule
+
 //FOUR TO ONE MUX
 module four_to_one_multiplexer (
     output reg [31:0] MUX_OUT, 

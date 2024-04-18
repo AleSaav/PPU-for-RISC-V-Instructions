@@ -327,10 +327,10 @@ registerFile RF(
     .PB(PB),
 
     //Register File inputs
-    .RW(RD_END),
+    .RW(RD_WB),
     .RA(RS1), 
     .RB(RS2),
-    .enable(WBOut_RF_enable), 
+    .enable(WB_RF_enable), 
     .clk(clk),
     .PW(ALU_Mux_END)
 );
@@ -348,11 +348,20 @@ signalLogicBox logigBox(
     .PC_Mux(PC_Mux)
 );
 
-two_to_one_multiplexer MemMux(
+wire[31:0] test;
+
+MEM_multiplexer MemMux(
     .MUX_OUT(ALU_Mux_WB), 
-    .selector(Mem_load_Instr), 
-    .A(DataOutDM),
-    .B(ALU_Mux_MEM)
+    .selector(MEM_Load_Instr), 
+    .A(ALU_Mux_MEM),
+    .B(DataOutDM)
+);
+
+MEM_multiplexer TESTMux(
+    .MUX_OUT(test), 
+    .selector(MEM_Load_Instr), 
+    .A(ALU_Mux_MEM),
+    .B(DataOutDM)
 );
 
 //Immediate value MUX
@@ -413,7 +422,7 @@ Hazard_Fowarding_Unit HFU(
     .CUMUX_E(CUMUX_enable),
     .MEM_RF_E(Mem_RF_enable), 
     .EX_RF_E(EX_RF_enable), 
-    .WB_RF_E(WBOut_RF_enable), 
+    .WB_RF_E(WB_RF_enable), 
     .ID_load_instr(EX_load_Instr), 
     .ID_RS1(RS1), 
     .ID_RS2(RS2),
@@ -565,7 +574,7 @@ MEM_WB_Register MEM_WB(
     .Comb_OpFunct_IN(Mem_Comb_OpFunct),
     .Reset(GlobalReset), 
     .clk(clk),
-    .data_Mem_MUX_IN(ALU_Mux_MEM), 
+    .data_Mem_MUX_IN(ALU_Mux_WB), 
     .RD_IN(RD_MEM),  
 
     //MEM_WB_Register Outputs
@@ -581,23 +590,23 @@ MEM_WB_Register MEM_WB(
     .WB_shift_imm_OUT(WB_shift_imm),
     .RAM_Size_OUT(WB_RAM_Size),
     .Comb_OpFunct_OUT(WB_Comb_OpFunct),
-    .data_Mem_MUX_OUT(ALU_Mux_WB), 
-    .RD_OUT(RD_WB)
-);
-
-WB_Out_Register WB (
-    // MEM_WB_Register Inputs
-    .WB_RF_Enable_IN(WB_RF_enable),
-    .Reset(GlobalReset), 
-    .clk(clk), 
-    .data_Mem_MUX_IN(ALU_Mux_WB), 
-    .RD_IN(RD_WB), 
-
-    //WB Outputs 
-    .WB_RF_Enable_OUT(WBOut_RF_enable),
     .data_Mem_MUX_OUT(ALU_Mux_END), 
     .RD_OUT(RD_END)
 );
+
+// WB_Out_Register WB (
+//     // MEM_WB_Register Inputs
+//     .WB_RF_Enable_IN(WB_RF_enable),
+//     .Reset(GlobalReset), 
+//     .clk(clk), 
+//     .data_Mem_MUX_IN(ALU_Mux_WB), 
+//     .RD_IN(RD_WB), 
+
+//     //WB Outputs 
+//     .WB_RF_Enable_OUT(WBOut_RF_enable),
+//     .data_Mem_MUX_OUT(ALU_Mux_END), 
+//     .RD_OUT(RD_END)
+// );
 
 //instruction_memory
 instruction_memory Inst_Mem(
@@ -661,7 +670,7 @@ control_unit_multiplexer MuxCU(
 
     initial begin
         // Precharging the Instruction Memory
-        fi = $fopen("input_file.txt","r");
+        fi = $fopen("PF4_debbug_input.txt","r");
         Address = 9'b000000000;
         while (!$feof(fi)) begin
             code = $fscanf(fi, "%b", data);
@@ -725,7 +734,40 @@ initial begin
     // WB_RF_enable
     // );
 
-    $monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\n PC = %d \nr1 = %d r2 =%d r3 = %d r5 = %d  r6 = %d \n \n", $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q5, RF.Q6);
+    //$monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\nPC = %d\n \nr1 = %d \nr2 = %d \nr3 = %d \nr5 = %d  \nr6 = %d \n \n", $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q5, RF.Q6);
     //$monitor("PC %d", PC_Out);
+
+    // $monitor("PC %d\n\n\nA= %d\nB= %d\nOUT= %d\n\n\n-------------------------------------------------------------------------\n", 
+    // PC_Out,
+    // Alu_A,
+    // NSO, 
+    // Alu_Out 
+    // );
+
+    $monitor("PC %d\n\nInstruction %b\nPA Out= %d\nSelector= %b\nPA Reg out= %d\nALU in= %d\nMEM in= %d \nWB in = %d\nRS1= %d, RS2=%d\nALU A = %d , ALU B%d ALU OUT = %d\nMUX in A =%d ,  MUX in B=%d, MEM MUX OUT= %d, MUX Selector=%b\n\n test= %d \n R5=%d\n\n-------------------------------------------------------------------------\n", 
+    PC_Out,
+    Instruction, 
+    PA_MUX, 
+    MUX_PA_enable,
+    PA, 
+    Alu_Out, 
+    ALU_Mux_WB, 
+    ALU_Mux_END,
+    RS1, 
+    RS2,
+    Alu_A,
+    NSO, 
+    Alu_Out,
+    
+    DataOutDM,
+    ALU_Mux_MEM, 
+    ALU_Mux_WB, 
+    Mem_load_Instr, 
+    test, 
+    RF.Q5, 
+    RW, 
+    WB_RF_enable
+    );
+    
 end
 endmodule
