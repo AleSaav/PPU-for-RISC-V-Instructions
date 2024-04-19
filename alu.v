@@ -17,11 +17,6 @@ module alu (
     //ALU SPECS
     always @(A, B, Op)
     begin
-        Out = 32'b0;
-        Z = 1'b0;
-        N = 1'b0;
-        C = 1'b0;
-        V = 1'b0;
 
         case (Op)
             4'b0000: //0

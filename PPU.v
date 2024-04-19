@@ -26,7 +26,8 @@ wire [31:0] dataOut;
 //precharges
 integer fi, code, i;
 reg [7:0] data;
-reg [8:0] Address;
+reg [8:0] Address, Address2;
+
 
 //Outputs Stage ID
 wire resetIF;
@@ -673,6 +674,23 @@ control_unit_multiplexer MuxCU(
 /*----------| PRECHARGING FINISHED |----------*/
 
 
+/*----------| PRECHARGING STAGE |----------*/
+
+    initial begin
+        // Precharging the Data Memory
+        fi = $fopen("PF4_debbug_input.txt","r");
+        Address2 = 9'b000000000;
+        while (!$feof(fi)) begin
+            code = $fscanf(fi, "%b", data);
+            DataMem.Mem[Address2] = data;
+            Address2 = Address2 + 1;
+        end
+        $fclose(fi);
+    end
+
+/*----------| PRECHARGING FINISHED |----------*/
+
+
 // Clock generator
 initial begin
     clk = 0;
@@ -775,7 +793,7 @@ initial begin
     // TA
     // );    
 
-    $monitor("time=%0t , PC=%d , Adder=%d , PC enable=%b\n CU Ram Enable= %b Mux_RAM_Enable= %b , EX_RAM_Enable= %b, Mem_RAM_Enable= %b, WB_RAM_Enable= %b\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\nALU A=%b , ALU B= %b\n Salida MUX=%b\n MUX A= %b , MUX B= %b\nEnable=%b\nSize= %b , Ram Enable= %b , RW=%b\n",
+    $monitor("time=%0t , PC=%d , Adder=%d , PC enable=%b\n CU Ram Enable= %b Mux_RAM_Enable= %b , EX_RAM_Enable= %b, Mem_RAM_Enable= %b, WB_RAM_Enable= %b , DataMem.Mem[48]= %b\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\nALU A=%b , ALU B= %b\n Z= %b , N= %b , V= %b , C= %b\n Salida MUX=%b\n MUX A= %b , MUX B= %b\nEnable=%b\nSize= %b , Ram Enable= %b , RW=%b\n",
     $time,
     PC_Out,
     Adder_Out,
@@ -785,12 +803,18 @@ initial begin
     EX_RAM_Enable, 
     Mem_RAM_Enable,
     WB_RAM_Enable,
+    DataMem.Mem[48],
     signalLogicBox_OUT,
     reset_IF_ID,
     reset_ID_EX,
     PC_Mux, 
     Alu_A, 
     NSO,
+    Z,
+    N,
+    V,
+    C,
+    
     
 
     ALU_Mux_WB, 
@@ -798,7 +822,7 @@ initial begin
     DataOutDM,
     Mem_load_Instr,
     Mem_RAM_Size,
-    WB_RAM_Enable,
+    Mem_RAM_Enable,
     WB_RAM_RW, 
 
     );
