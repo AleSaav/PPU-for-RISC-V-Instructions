@@ -275,14 +275,24 @@ Condition_Handler CH(
     .N(N)
 );
 
-ram512x8 DM(
+// ram512x8 RAM(
+//     .DataOut(DataOutDM), 
+//     .Enable(WB_RAM_Enable), 
+//     .ReadWrite(WB_RAM_RW), 
+//     .Address(ALU_Mux_MEM[8:0]), 
+//     .DataIn(PB_MEM), 
+//     .Size(Mem_RAM_Size),
+//     .SEDM(Mem_RAM_SE)
+// );
+
+DataMemory DataMem(
     .DataOut(DataOutDM), 
-    .Enable(WB_RAM_Enable), 
-    .ReadWrite(WB_RAM_RW), 
-    .Address(ALU_Mux_MEM[31:23]), 
-    .DataIn(PB_MEM), 
-    .Size(Mem_RAM_Size),
-    .SEDM(Mem_RAM_SE)
+	.ReadWrite(Mem_RAM_RW),
+    .Enable(Mem_RAM_Enable),
+    .SignExt(Mem_RAM_SE),
+    .Address(ALU_Mux_MEM[8:0]), 
+	.DataIn(PB_MEM), 
+    .Size(Mem_RAM_Size)
 );
 
 secondOperandHandler SOH(
@@ -354,14 +364,7 @@ wire[31:0] test;
 
 MEM_multiplexer MemMux(
     .MUX_OUT(ALU_Mux_WB), 
-    .selector(MEM_Load_Instr), 
-    .A(ALU_Mux_MEM),
-    .B(DataOutDM)
-);
-
-MEM_multiplexer TESTMux(
-    .MUX_OUT(test), 
-    .selector(MEM_Load_Instr), 
+    .selector(Mem_load_Instr), 
     .A(ALU_Mux_MEM),
     .B(DataOutDM)
 );
@@ -424,7 +427,7 @@ Hazard_Fowarding_Unit HFU(
     .MEM_RF_E(Mem_RF_enable), 
     .EX_RF_E(EX_RF_enable), 
     .WB_RF_E(WB_RF_enable), 
-    .ID_load_instr(EX_load_Instr), 
+    .load_instr(EX_load_Instr), 
     .ID_RS1(RS1), 
     .ID_RS2(RS2),
     .RD_EX(RD_EX), 
@@ -772,12 +775,34 @@ initial begin
     // TA
     // );    
 
-    $monitor("PC=%D\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\n\n\n",
+    $monitor("time=%0t , PC=%d , Adder=%d , PC enable=%b\n CU Ram Enable= %b Mux_RAM_Enable= %b , EX_RAM_Enable= %b, Mem_RAM_Enable= %b, WB_RAM_Enable= %b\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\nALU A=%b , ALU B= %b\n Salida MUX=%b\n MUX A= %b , MUX B= %b\nEnable=%b\nSize= %b , Ram Enable= %b , RW=%b\n",
+    $time,
     PC_Out,
+    Adder_Out,
+    PC_enable,
+    RAM_Enable,
+    Mux_RAM_Enable,
+    EX_RAM_Enable, 
+    Mem_RAM_Enable,
+    WB_RAM_Enable,
     signalLogicBox_OUT,
     reset_IF_ID,
     reset_ID_EX,
-    PC_Mux
+    PC_Mux, 
+    Alu_A, 
+    NSO,
+    
+
+    ALU_Mux_WB, 
+    ALU_Mux_MEM,
+    DataOutDM,
+    Mem_load_Instr,
+    Mem_RAM_Size,
+    WB_RAM_Enable,
+    WB_RAM_RW, 
+
     );
+
+    
 end
 endmodule

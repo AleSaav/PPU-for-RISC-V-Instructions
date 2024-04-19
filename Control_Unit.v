@@ -210,6 +210,7 @@ module Control_Unit(
                                 RAM_Size = 2'b00;
                                 ID_ALU_op = 4'b0010;
                                 ID_shift_imm = 3'b001;
+                                
                                 $display("LBU");
                             end
                     end

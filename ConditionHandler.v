@@ -24,6 +24,7 @@ always @* begin
             begin
                 if((Z == 1'b1) || (N == 1'b0)) conditionalS <= 1'b1;
                 else conditionalS <= 1'b0;
+                $display("BGE");
             end
         end
         10'b1101100011: begin //BLTU less than

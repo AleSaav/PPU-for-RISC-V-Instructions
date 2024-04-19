@@ -1,5 +1,5 @@
 module DataMemory(output reg[31:0] DataOut, 
-	input ReadWrite, input Enable, input SignExt, input[31:0] Address, 
+	input ReadWrite, input Enable, input SignExt, input[8:0] Address, 
 	input[31:0] DataIn, input [1:0] Size);
 	
 	parameter BYTE       = 2'b00;
@@ -15,7 +15,7 @@ module DataMemory(output reg[31:0] DataOut,
 		conversionBE = {BE[7:0], BE[15:8], BE[23:16], BE[31:24]};
 	endfunction */
 	
-	always @ (*)
+	always @ (Enable)
     if (Enable)
         if (ReadWrite) //RW = 1, E = 1, SE = X <= As per document
 		begin
