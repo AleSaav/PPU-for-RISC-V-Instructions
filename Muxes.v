@@ -69,7 +69,7 @@ module MEM_multiplexer (
     if (selector == 1'b1) MUX_OUT <= B;
     else MUX_OUT <= A;
     
-    $display("A=%d , B=%d , MUX_OUT=%d", A, B, MUX_OUT);
+    //$display("A=%d , B=%d , MUX_OUT=%d", A, B, MUX_OUT);
     end
 endmodule
 

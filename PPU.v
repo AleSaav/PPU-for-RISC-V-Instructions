@@ -186,6 +186,8 @@ wire PC_E;
 wire IF_ID_E;
 wire CUMUX_E;
 
+wire[31:0] Null;
+
 //Reset Pipeline
 wire Inconditional_Reset;
 
@@ -374,17 +376,16 @@ two_to_one_multiplexer IMM_MUX(
 
 targetAddress TA4(
     .targetAddress_OUT(TA), 
-    .A(immediate_value),
-    .B(PCOGOut)
+    .A(immediate_value), //mux out as input
+    .B(PCOGOut) //
 );
 
 four_to_one_multiplexer logigBoxMux(
-
     //Inputs
     .A(TA_EX), //Conditional
     .B(Alu_Out), //JalR
     .C(TA), //Jal
-    .D(32'b0), //Null
+    .D(Null), //Null
     .selector(signalLogicBox_OUT),
     .MUX_OUT(LogicMuxOut)
 );
@@ -730,30 +731,53 @@ initial begin
     // Alu_Out 
     // );
 
-    $monitor("PC %d\n\nInstruction %b\nPA Out= %d\nSelector= %b\nPA Reg out= %d\nALU in= %d\nMEM in= %d\nWB in = %d\nRS1= %d, RS2=%d\nALU A = %d , ALU B%d ALU OUT = %d\nMUX in A =%d ,  MUX in B=%d, MEM MUX OUT= %d, MUX Selector=%b\n\ntest= %d \nR5=%d\n\n-------------------------------------------------------------------------\n", 
-    PC_Out,
-    Instruction, 
-    PA_MUX, 
-    MUX_PA_enable,
-    PA, 
-    Alu_Out, 
-    ALU_Mux_WB, 
-    ALU_Mux_END,
-    RS1, 
-    RS2,
-    Alu_A,
-    NSO, 
-    Alu_Out,
-    DataOutDM,
-    ALU_Mux_MEM, 
-    ALU_Mux_WB, 
-    Mem_load_Instr, 
-    test, 
-    RF.Q5, 
-    RD_END, 
-    WB_RF_enable
-    );
+    // $monitor("PC %d\n\nInstruction %b\nPA Out= %d\nSelector= %b\nPA Reg out= %d\nALU in= %d\nMEM in= %d\nWB in = %d\nRS1= %d, RS2=%d\nALU A = %d , ALU B%d ALU OUT = %d\nMUX in A =%d ,  MUX in B=%d, MEM MUX OUT= %d, MUX Selector=%b\n\ntest= %d \nR5=%d\nReset = %d\n-------------------------------------------------------------------------\n", 
+    // PC_Out,
+    // Instruction, 
+    // PA_MUX, 
+    // MUX_PA_enable,
+    // PA, 
+    // Alu_Out, 
+    // ALU_Mux_WB, 
+    // ALU_Mux_END,
+    // RS1, 
+    // RS2,
+    // Alu_A,
+    // NSO, 
+    // Alu_Out,
+    // DataOutDM,
+    // ALU_Mux_MEM, 
+    // ALU_Mux_WB, 
+    // Mem_load_Instr, 
+    // test, 
+    // RF.Q5, 
+    // RD_END, 
+    // WB_RF_enable, 
+    // reset_IF_ID
+    // );
 
-    
+    // $monitor("PC= %d\nTarget Address Conditional= %d\nJALR TA= %d\nJAL TA=%d\nNull= %d\nSelector= %b\nMUX OUT=%d\nOutput Condition Handler= %b\nIMM_b= %b , IMMB_J= %b\nMUX OUTPUT=%b , PC OUT=%d , Adder out = %d\n\n",
+    // PC_Out,
+    // TA_EX, 
+    // Alu_Out, 
+    // TA, 
+    // Null, 
+    // signalLogicBox_OUT, 
+    // LogicMuxOut, 
+    // conditionalS, 
+    // imm_b,
+    // immb_j, 
+    // immediate_value, 
+    // PCOGOut, 
+    // TA
+    // );    
+
+    $monitor("PC=%D\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\n\n\n",
+    PC_Out,
+    signalLogicBox_OUT,
+    reset_IF_ID,
+    reset_ID_EX,
+    PC_Mux
+    );
 end
 endmodule
