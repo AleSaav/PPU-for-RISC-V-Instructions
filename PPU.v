@@ -327,7 +327,7 @@ registerFile RF(
     .PB(PB),
 
     //Register File inputs
-    .RW(RD_WB),
+    .RW(RD_END),
     .RA(RS1), 
     .RB(RS2),
     .enable(WB_RF_enable), 
@@ -594,20 +594,6 @@ MEM_WB_Register MEM_WB(
     .RD_OUT(RD_END)
 );
 
-// WB_Out_Register WB (
-//     // MEM_WB_Register Inputs
-//     .WB_RF_Enable_IN(WB_RF_enable),
-//     .Reset(GlobalReset), 
-//     .clk(clk), 
-//     .data_Mem_MUX_IN(ALU_Mux_WB), 
-//     .RD_IN(RD_WB), 
-
-//     //WB Outputs 
-//     .WB_RF_Enable_OUT(WBOut_RF_enable),
-//     .data_Mem_MUX_OUT(ALU_Mux_END), 
-//     .RD_OUT(RD_END)
-// );
-
 //instruction_memory
 instruction_memory Inst_Mem(
     //instruction_memory Output
@@ -744,7 +730,7 @@ initial begin
     // Alu_Out 
     // );
 
-    $monitor("PC %d\n\nInstruction %b\nPA Out= %d\nSelector= %b\nPA Reg out= %d\nALU in= %d\nMEM in= %d \nWB in = %d\nRS1= %d, RS2=%d\nALU A = %d , ALU B%d ALU OUT = %d\nMUX in A =%d ,  MUX in B=%d, MEM MUX OUT= %d, MUX Selector=%b\n\n test= %d \n R5=%d\n\n-------------------------------------------------------------------------\n", 
+    $monitor("PC %d\n\nInstruction %b\nPA Out= %d\nSelector= %b\nPA Reg out= %d\nALU in= %d\nMEM in= %d\nWB in = %d\nRS1= %d, RS2=%d\nALU A = %d , ALU B%d ALU OUT = %d\nMUX in A =%d ,  MUX in B=%d, MEM MUX OUT= %d, MUX Selector=%b\n\ntest= %d \nR5=%d\n\n-------------------------------------------------------------------------\n", 
     PC_Out,
     Instruction, 
     PA_MUX, 
@@ -758,16 +744,16 @@ initial begin
     Alu_A,
     NSO, 
     Alu_Out,
-    
     DataOutDM,
     ALU_Mux_MEM, 
     ALU_Mux_WB, 
     Mem_load_Instr, 
     test, 
     RF.Q5, 
-    RW, 
+    RD_END, 
     WB_RF_enable
     );
+
     
 end
 endmodule

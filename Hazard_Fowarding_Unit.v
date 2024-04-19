@@ -28,7 +28,7 @@ module Hazard_Fowarding_Unit(
             begin
                 MUX_PA_E = 2'b10;       //MEM stage mux Output passes
             end	
-        else if (WB_RF_E && (ID_RS1 == RD_WB)) 
+        else if (WB_RF_E == 1'b1 && (ID_RS1 == RD_WB))  
             begin
                 MUX_PA_E = 2'b11;       //PW passes
             end	
@@ -46,7 +46,7 @@ module Hazard_Fowarding_Unit(
             begin
                 MUX_PB_E = 2'b10;       //MEM stage mux Output passes
             end	
-        else if (WB_RF_E && (ID_RS2 == RD_WB)) 
+        else if (WB_RF_E == 1'b1   && (ID_RS2 == RD_WB)) 
             begin
                 MUX_PB_E = 2'b11;       //PW passes
             end	
