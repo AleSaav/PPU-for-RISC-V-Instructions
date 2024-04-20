@@ -14,7 +14,6 @@
 `include "DataMemory.v"
 `include "Hazard_Fowarding_Unit.v"
 `include "targetAddressAdder.v"
-`include "ram.v"
 
 module PPU ();
 
@@ -170,7 +169,7 @@ wire [11:0] imm_s;
 
 //Condition Handler
 wire conditionalS;
-input wire Z;
+input wire zero;
 input wire N;
 
 //OR 
@@ -272,19 +271,9 @@ ORJumps OREX(
 Condition_Handler CH(
     .conditionalS(conditionalS),
     .Comb_OpFunct(EX_Comb_OpFunct),
-    .Z(Z), 
+    .zero(zero), 
     .N(N)
 );
-
-// ram512x8 RAM(
-//     .DataOut(DataOutDM), 
-//     .Enable(WB_RAM_Enable), 
-//     .ReadWrite(WB_RAM_RW), 
-//     .Address(ALU_Mux_MEM[8:0]), 
-//     .DataIn(PB_MEM), 
-//     .Size(Mem_RAM_Size),
-//     .SEDM(Mem_RAM_SE)
-// );
 
 DataMemory DataMem(
     .DataOut(DataOutDM), 
@@ -321,7 +310,7 @@ alu Alu(
 
     //output
     .Out(Alu_Out),
-    .Z(Z),
+    .zero(zero),
     .N(N),
     .C(C),
     .V(V)
@@ -389,17 +378,17 @@ four_to_one_multiplexer logigBoxMux(
     .A(TA_EX), //Conditional
     .B(Alu_Out), //JalR
     .C(TA), //Jal
-    .D(Null), //Null
+    .D(Adder_Out), //Null
     .selector(signalLogicBox_OUT),
-    .MUX_OUT(LogicMuxOut)
+    .MUX_OUT(PC_In)
 );
 
-two_to_one_multiplexer newPC(
-    .A(Adder_Out),
-    .B(LogicMuxOut),
-    .selector(PC_Mux),
-    .MUX_OUT(PC_In) // new PC value
-);
+// two_to_one_multiplexer newPC(
+//     .A(Adder_Out),
+//     .B(LogicMuxOut),
+//     .selector(PC_Mux),
+//     .MUX_OUT(PC_In) // new PC value
+// );
 
 four_to_one_multiplexer PAMux(
     .MUX_OUT(PA_MUX), 
@@ -448,6 +437,7 @@ IF_ID_Register IF_ID(
     .Reset(GlobalReset), 
     .clk(clk),
     .Inconditional_Reset(reset_IF_ID), //INCONDITIONAL RESET
+    .Conditional_Reset(reset_ID_EX),
 
     //IF_ID_Register Output
     .I31_I0(Instruction),
@@ -703,7 +693,8 @@ initial begin
 end
 
 initial begin
-    #60 $finish; //ending the simulation so the loop doesnt stay infinitely running
+    #60 $display("Mem 51 %b", DataMem.Mem[51]);
+    #4 $finish;//ending the simulation so the loop doesnt stay infinitely running
 end
 
 initial begin
@@ -742,8 +733,11 @@ initial begin
     // WB_RF_enable
     // );
 
-    //$monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\nPC = %d\n \nr1 = %d \nr2 = %d \nr3 = %d \nr5 = %d  \nr6 = %d \n \n", $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q5, RF.Q6);
-    //$monitor("PC %d", PC_Out);
+    $monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\nPC = %d\n \nr1 = %d \nr2 = %d \nr3 = %d \nr5 = %d  \nr6 = %d \n Address %d , DataMem out %b , Reset IF/ID = %b , Reset ID EX= %b\n, Instruction= %b\n\n\n", 
+    $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q5, RF.Q6, ALU_Mux_MEM[8:0], DataOutDM, reset_IF_ID,
+    reset_ID_EX, Instruction
+    );
+    
 
     // $monitor("PC %d\n\n\nA= %d\nB= %d\nOUT= %d\n\n\n-------------------------------------------------------------------------\n", 
     // PC_Out,
@@ -793,39 +787,47 @@ initial begin
     // TA
     // );    
 
-    $monitor("time=%0t , PC=%d , Adder=%d , PC enable=%b\n CU Ram Enable= %b Mux_RAM_Enable= %b , EX_RAM_Enable= %b, Mem_RAM_Enable= %b, WB_RAM_Enable= %b , DataMem.Mem[48]= %b\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\nALU A=%b , ALU B= %b\n Z= %b , N= %b , V= %b , C= %b\n Salida MUX=%b\n MUX A= %b , MUX B= %b\nEnable=%b\nSize= %b , Ram Enable= %b , RW=%b\n",
-    $time,
-    PC_Out,
-    Adder_Out,
-    PC_enable,
-    RAM_Enable,
-    Mux_RAM_Enable,
-    EX_RAM_Enable, 
-    Mem_RAM_Enable,
-    WB_RAM_Enable,
-    DataMem.Mem[48],
-    signalLogicBox_OUT,
-    reset_IF_ID,
-    reset_ID_EX,
-    PC_Mux, 
-    Alu_A, 
-    NSO,
-    Z,
-    N,
-    V,
-    C,
-    
-    
-
-    ALU_Mux_WB, 
-    ALU_Mux_MEM,
-    DataOutDM,
-    Mem_load_Instr,
-    Mem_RAM_Size,
-    Mem_RAM_Enable,
-    WB_RAM_RW, 
-
-    );
+    // $monitor("time=%0t , PC=%d , Adder=%d , PC enable=%b\n CU Ram Enable= %b Mux_RAM_Enable= %b , EX_RAM_Enable= %b, Mem_RAM_Enable= %b, WB_RAM_Enable= %b , DataMem.Mem[48]= %b\nOUTPUT SLB= %d\nReset IF/ID = %b\nReset ID/EX = %b\nPC MUX = %d\nALU A=%b , ALU B= %b\n Z= %b , N= %b , V= %b , C= %b\n Salida MUX=%b\n MUX A= %b , MUX B= %b\nEnable=%b\nSize= %b , Ram Enable= %b , RW=%b\nPC IN=%d\n",
+    // $time,
+    // PC_Out,
+    // Adder_Out,
+    // PC_enable,
+    // RAM_Enable,
+    // Mux_RAM_Enable,
+    // EX_RAM_Enable, 
+    // Mem_RAM_Enable,
+    // WB_RAM_Enable,
+    // RAM.Mem[48],
+    // signalLogicBox_OUT,
+    // reset_IF_ID,
+    // reset_ID_EX,
+    // PC_Mux, 
+    // Alu_A, 
+    // NSO,
+    // zero,
+    // N,
+    // V,
+    // C,
+    // ALU_Mux_WB, 
+    // ALU_Mux_MEM,
+    // DataOutDM,
+    // Mem_load_Instr,
+    // Mem_RAM_Size,
+    // Mem_RAM_Enable,
+    // WB_RAM_RW, 
+    // PC_In
+    // );
+    // $monitor("PC %d\nPC OG=  %d , PC in= %d\n  JAL %d\n JALR %d\n Adder out %d\nconditional %d\nRS1 %d RS2 %d Imm_B %d Pc %d \n\n", 
+    // PC_Out, 
+    // PCOGOut,
+    // PC_In,
+    // TA, 
+    // Alu_Out,
+    // Adder_Out,
+    // TA_EX, 
+    // RS1, 
+    // RS2, imm_b , PCOGOut
+    // );
 
     
 end

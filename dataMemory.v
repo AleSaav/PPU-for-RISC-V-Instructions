@@ -15,8 +15,10 @@ module DataMemory(output reg[31:0] DataOut,
 		conversionBE = {BE[7:0], BE[15:8], BE[23:16], BE[31:24]};
 	endfunction */
 	
-	always @ (Enable)
-    if (Enable)
+	always @ (Enable, ReadWrite, SignExt, Address, DataIn, Size)
+	begin
+		$display("entro a Data memory :\n Enable %b , RW %b , SE %b , Address = %d , DataIN = %b , Size %b", Enable, ReadWrite, SignExt, Address, DataIn, Size);
+    if (Enable) begin
         if (ReadWrite) //RW = 1, E = 1, SE = X <= As per document
 		begin
             //Describes the writing operation, for each parameter, the size in which they consist of is addressed and specified
@@ -26,6 +28,7 @@ module DataMemory(output reg[31:0] DataOut,
 				//32'h00000022;
 				//32'h0000AAAA;
                     Mem[Address] = DataIn[7:0]; 
+					//$display("Store byte Address = %d , DataIN = %b", Address, DataIn);
                 end
 				
 				HALFWORD: //2'b01: //Also known as 2 consecutive bytes, implying how memory handles amounts (around 8bits [1byte] at a time)
@@ -84,6 +87,8 @@ module DataMemory(output reg[31:0] DataOut,
 					end
 				endcase
 			end
+	end
+	end
 			
 		
 		/* else begin

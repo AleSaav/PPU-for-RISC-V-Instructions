@@ -3,6 +3,7 @@ module IF_ID_Register(
     input [31:0] Instuction_Mem_OUT, //32-bit
     input  LE, Reset, clk, //Load Enable, Reset signal and Clock Signal
     input Inconditional_Reset,
+    input Conditional_Reset,
     input [31:0] PCOG, PC4,
     output reg [31:0] I31_I0, //para el control unit
     output reg [5:0] I25_30,
@@ -23,7 +24,7 @@ module IF_ID_Register(
 
     always @(posedge clk) 
     begin
-        case (Reset || Inconditional_Reset)
+        case (Reset || (Inconditional_Reset || Conditional_Reset) )
         1'b1: 
         begin // Si la senal de Reset <= 1, se da 
             I31_I0 <= 32'b0;
@@ -44,11 +45,9 @@ module IF_ID_Register(
             rd <= 5'b0;
             Imm12 <= 12'b0;
         end
-        endcase
-
-        case (LE)
-        1'b1: 
+        1'b0:
         begin
+            if(LE) begin
             I31_I0 <= Instuction_Mem_OUT;
             I25_30 <= Instuction_Mem_OUT[30:25];
             I8_11 <= Instuction_Mem_OUT[11:8];
@@ -67,7 +66,32 @@ module IF_ID_Register(
             rd <= Instuction_Mem_OUT[11:7];
             Imm12 <= Instuction_Mem_OUT[31:20];
         end
+        end
+        
         endcase
+
+        // case (LE)
+        // 1'b1: 
+        // begin
+        //     I31_I0 <= Instuction_Mem_OUT;
+        //     I25_30 <= Instuction_Mem_OUT[30:25];
+        //     I8_11 <= Instuction_Mem_OUT[11:8];
+        //     I31 <= Instuction_Mem_OUT[31];
+        //     I20 <= Instuction_Mem_OUT[20];
+        //     I7 <= Instuction_Mem_OUT[7];
+        //     I12_19 <= Instuction_Mem_OUT[19:12];
+        //     I21_30 <= Instuction_Mem_OUT[30:21];
+        //     PCOGOut <= PCOG[31:0];
+        //     PC4Out <= PC4[31:0];
+        //     RS1 <= Instuction_Mem_OUT[19:15];
+        //     RS2 <= Instuction_Mem_OUT[24:20];
+        //     Imm12_11_5 <= Instuction_Mem_OUT[31:25];
+        //     Imm12_4_0 <= Instuction_Mem_OUT[11:7];
+        //     Imm20 <= Instuction_Mem_OUT[31:12];
+        //     rd <= Instuction_Mem_OUT[11:7];
+        //     Imm12 <= Instuction_Mem_OUT[31:20];
+        // end
+        // endcase
     end
 endmodule
 //************************* ID_EX_Register ******************************//

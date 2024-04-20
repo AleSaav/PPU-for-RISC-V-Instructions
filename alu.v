@@ -6,7 +6,7 @@ module alu (
 
     //output
     output reg [31:0] Out,
-    output reg Z,
+    output reg zero,
     output reg N,
     output reg C,
     output reg V
@@ -17,7 +17,7 @@ module alu (
     //ALU SPECS
     always @(A, B, Op)
     begin
-
+     
         case (Op)
             4'b0000: //0
             begin
@@ -44,10 +44,11 @@ module alu (
                 temp = (A - B); // obtiene el bit 33 para calcular C
 
                 //flags
-                Z = (Out == 0) ? 1'b1 : 1'b0; //Verifica si es 0 el valor
+                zero = (Out == 0) ? 1'b1 : 1'b0; //Verifica si es 0 el valor
                 N = Out[31]; //Verifica si es negativo el valor
                 C = temp[32]; //Verifica si el bit de 32 bits hace carry a la posicion 33
                 V = ((A[31] ^ B[31]) & (A[31] ^ Out[31])) ? 1'b1 : 1'b0; //Verifica si hay overflow
+                $display("Resta");
             end
 
             4'b0100: //4
@@ -81,7 +82,7 @@ module alu (
                 temp = A - B;
                 
                 //flags
-                Z = (temp == 0) ? 1'b1 : 1'b0; //Verifica si es 0 el valor
+                zero = (temp == 0) ? 1'b1 : 1'b0; //Verifica si es 0 el valor
                 N = temp[31]; //Verifica si es negativo el valor
                 C = temp[32]; //Verifica si el bit de 32 bits hace carry a la posicion 33
                 V = ((A[31] ^ B[31]) & (A[31] ^ temp[31])) ? 1'b1 : 1'b0; //Verifica si hay overflow
@@ -103,7 +104,7 @@ module alu (
                 temp = A - B;
                 
                 //flags
-                Z = (temp == 0) ? 1'b1 : 1'b0; //Verifica si es 0 el valor
+                zero = (temp == 0) ? 1'b1 : 1'b0; //Verifica si es 0 el valor
                 N = temp [31]; //Verifica si es negativo el valor
                 C = temp[32]; //Verifica si el bit de 32 bits hace carry a la posicion 33
                 V = ((A[31] ^ B[31]) & (A[31] ^ temp[31])) ? 1'b1 : 1'b0; //Verifica si hay overflow
@@ -136,20 +137,21 @@ module alu (
                 Out = A ^ B;
             end   
 
-            4'b1101: //13+
-            begin
-                Out = 32'b00000000000000000000000000000000;
-            end  
+            // 4'b1101: //13+
+            // begin
+            //     Out = 32'b00000000000000000000000000000000;
+            // end  
 
-            4'b1110: //14
-            begin
-                Out = 32'b00000000000000000000000000000000;
-            end  
+            // 4'b1110: //14
+            // begin
+            //     Out = 32'b00000000000000000000000000000000;
+            // end  
 
-            default: //15
-            begin
-                Out = 32'b00000000000000000000000000000000;
-            end  
+            // default: //15
+            // begin
+            //     Out = 32'b00000000000000000000000000000000;
+            // end  
         endcase
+        //$display("Z %d, N %d , C %d, V %d",zero, N, C, V );
     end
 endmodule

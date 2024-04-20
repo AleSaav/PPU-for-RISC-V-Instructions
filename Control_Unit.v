@@ -239,12 +239,14 @@ module Control_Unit(
                             ID_shift_imm = 3'b010;
                             RAM_Size = 2'b00;
                             $display("SB");
+                            $display("CU :\n Enable %b , RW %b , SE %b , Size %b", RAM_Enable, RAM_RW, RAM_SE, RAM_Size);
                         end
                     end
                 7'b1100011: 
                     begin
                         //Conditional Branch Instructions
                         ID_RF_enable = 1'b0;
+                        ID_ALU_op = 4'b0011;
                         if (funct3 == 3'b000) 
                         begin
                             $display("BEQ");
@@ -260,7 +262,7 @@ module Control_Unit(
                         //Unconditional Branch Instructions
                         else if (funct3 == 3'b101) 
                         begin
-                            ID_ALU_op = 4'b0011;
+                            //ID_ALU_op = 4'b0011;
                             $display("BGE");
                         end
                         else if (funct3 == 3'b110) 
@@ -307,7 +309,11 @@ module Control_Unit(
                     end
                 default: //Not yet a possible instruction
                     begin
-                        $display("Not yet a instruction");
+                        //$display("Not yet a instruction");
+                        $display("NOP");
+                        ID_ALU_op = 4'b0;
+                        ID_load_Instr = 1'b0;
+                        ID_RF_enable = 1'b0;
                     end
             endcase
         end 
