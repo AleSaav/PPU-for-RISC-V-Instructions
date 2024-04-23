@@ -1,0 +1,222 @@
+#! /opt/homebrew/Cellar/icarus-verilog/11.0/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/system.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/vhdl_sys.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/vhdl_textio.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/v2005_math.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/11.0/lib/ivl/va_math.vpi";
+S_0x157e07b90 .scope module, "Hazard_Fowarding_Unit" "Hazard_Fowarding_Unit" 2 1;
+ .timescale 0 0;
+    .port_info 0 /OUTPUT 2 "MUX_PA_E";
+    .port_info 1 /OUTPUT 2 "MUX_PB_E";
+    .port_info 2 /OUTPUT 1 "PC_E";
+    .port_info 3 /OUTPUT 1 "IF_ID_E";
+    .port_info 4 /OUTPUT 1 "CUMUX_E";
+    .port_info 5 /INPUT 1 "MEM_RF_E";
+    .port_info 6 /INPUT 1 "EX_RF_E";
+    .port_info 7 /INPUT 1 "WB_RF_E";
+    .port_info 8 /INPUT 1 "load_instr";
+    .port_info 9 /INPUT 5 "ID_RS1";
+    .port_info 10 /INPUT 5 "ID_RS2";
+    .port_info 11 /INPUT 5 "RD_EX";
+    .port_info 12 /INPUT 5 "RD_MEM";
+    .port_info 13 /INPUT 5 "RD_WB";
+    .port_info 14 /INPUT 2 "register_amount";
+v0x147e0d0e0_0 .var "CUMUX_E", 0 0;
+o0x138018040 .functor BUFZ 1, C4<z>; HiZ drive
+v0x147e1cbd0_0 .net "EX_RF_E", 0 0, o0x138018040;  0 drivers
+o0x138018070 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x147e1cc70_0 .net "ID_RS1", 4 0, o0x138018070;  0 drivers
+o0x1380180a0 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x147e1cd30_0 .net "ID_RS2", 4 0, o0x1380180a0;  0 drivers
+v0x147e1cde0_0 .var "IF_ID_E", 0 0;
+o0x138018100 .functor BUFZ 1, C4<z>; HiZ drive
+v0x147e1cec0_0 .net "MEM_RF_E", 0 0, o0x138018100;  0 drivers
+v0x147e1cf60_0 .var "MUX_PA_E", 1 0;
+v0x147e1d010_0 .var "MUX_PB_E", 1 0;
+v0x147e1d0c0_0 .var "PC_E", 0 0;
+o0x1380181c0 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x147e1d1d0_0 .net "RD_EX", 4 0, o0x1380181c0;  0 drivers
+o0x1380181f0 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x147e1d270_0 .net "RD_MEM", 4 0, o0x1380181f0;  0 drivers
+o0x138018220 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x147e1d320_0 .net "RD_WB", 4 0, o0x138018220;  0 drivers
+o0x138018250 .functor BUFZ 1, C4<z>; HiZ drive
+v0x147e1d3d0_0 .net "WB_RF_E", 0 0, o0x138018250;  0 drivers
+o0x138018280 .functor BUFZ 1, C4<z>; HiZ drive
+v0x147e1d470_0 .net "load_instr", 0 0, o0x138018280;  0 drivers
+o0x1380182b0 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x147e1d510_0 .net "register_amount", 1 0, o0x1380182b0;  0 drivers
+E_0x147e048c0/0 .event edge, v0x147e1d470_0, v0x147e1cc70_0, v0x147e1d1d0_0, v0x147e1cbd0_0;
+E_0x147e048c0/1 .event edge, v0x147e1d510_0, v0x147e1cec0_0, v0x147e1d270_0, v0x147e1d3d0_0;
+E_0x147e048c0/2 .event edge, v0x147e1d320_0, v0x147e1cd30_0;
+E_0x147e048c0 .event/or E_0x147e048c0/0, E_0x147e048c0/1, E_0x147e048c0/2;
+    .scope S_0x157e07b90;
+T_0 ;
+    %wait E_0x147e048c0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x147e1cde0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x147e1d0c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x147e0d0e0_0, 0, 1;
+    %load/vec4 v0x147e1d470_0;
+    %load/vec4 v0x147e1cc70_0;
+    %load/vec4 v0x147e1d1d0_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x147e1cde0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x147e1d0c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x147e0d0e0_0, 0, 1;
+T_0.0 ;
+    %load/vec4 v0x147e1cbd0_0;
+    %load/vec4 v0x147e1cc70_0;
+    %load/vec4 v0x147e1d1d0_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 2, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 1, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %or;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.2, 8;
+    %pushi/vec4 1, 0, 2;
+    %store/vec4 v0x147e1cf60_0, 0, 2;
+    %vpi_call 2 28 "$display", "entro a forwarding de EX , RD_EX = %d", v0x147e1d1d0_0 {0 0 0};
+    %jmp T_0.3;
+T_0.2 ;
+    %load/vec4 v0x147e1cec0_0;
+    %load/vec4 v0x147e1cc70_0;
+    %load/vec4 v0x147e1d270_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 2, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 1, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %or;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.4, 8;
+    %pushi/vec4 2, 0, 2;
+    %store/vec4 v0x147e1cf60_0, 0, 2;
+    %jmp T_0.5;
+T_0.4 ;
+    %load/vec4 v0x147e1d3d0_0;
+    %pushi/vec4 1, 0, 1;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %load/vec4 v0x147e1cc70_0;
+    %load/vec4 v0x147e1d320_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 2, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 1, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %or;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.6, 8;
+    %pushi/vec4 3, 0, 2;
+    %store/vec4 v0x147e1cf60_0, 0, 2;
+    %jmp T_0.7;
+T_0.6 ;
+    %pushi/vec4 0, 0, 2;
+    %store/vec4 v0x147e1cf60_0, 0, 2;
+T_0.7 ;
+T_0.5 ;
+T_0.3 ;
+    %load/vec4 v0x147e1cbd0_0;
+    %load/vec4 v0x147e1cd30_0;
+    %load/vec4 v0x147e1d1d0_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 1, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.8, 8;
+    %pushi/vec4 1, 0, 2;
+    %store/vec4 v0x147e1d010_0, 0, 2;
+    %vpi_call 2 47 "$display", "entro a forwarding de EX , RD_EX = %d", v0x147e1d1d0_0 {0 0 0};
+    %jmp T_0.9;
+T_0.8 ;
+    %load/vec4 v0x147e1cec0_0;
+    %load/vec4 v0x147e1cd30_0;
+    %load/vec4 v0x147e1d270_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 1, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.10, 8;
+    %pushi/vec4 2, 0, 2;
+    %store/vec4 v0x147e1d010_0, 0, 2;
+    %jmp T_0.11;
+T_0.10 ;
+    %load/vec4 v0x147e1d3d0_0;
+    %pushi/vec4 1, 0, 1;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %load/vec4 v0x147e1cd30_0;
+    %load/vec4 v0x147e1d320_0;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %load/vec4 v0x147e1d510_0;
+    %pushi/vec4 1, 0, 2;
+    %cmp/e;
+    %flag_get/vec4 4;
+    %and;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.12, 8;
+    %pushi/vec4 3, 0, 2;
+    %store/vec4 v0x147e1d010_0, 0, 2;
+    %jmp T_0.13;
+T_0.12 ;
+    %pushi/vec4 0, 0, 2;
+    %store/vec4 v0x147e1d010_0, 0, 2;
+T_0.13 ;
+T_0.11 ;
+T_0.9 ;
+    %vpi_call 2 62 "$display", "MEM_RF_E =%d, EX_RF_E =%d, WB_RF_E =%d, load_instr =%d, ID_RS1 =%d, ID_RS2 =%d, RD_EX =%d, RD_MEM =%d, RD_WB =%d", v0x147e1cec0_0, v0x147e1cbd0_0, v0x147e1d3d0_0, v0x147e1d470_0, v0x147e1cc70_0, v0x147e1cd30_0, v0x147e1d1d0_0, v0x147e1d270_0, v0x147e1d320_0 {0 0 0};
+    %jmp T_0;
+    .thread T_0, $push;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "Hazard_Fowarding_Unit.v";

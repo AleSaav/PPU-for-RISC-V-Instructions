@@ -48,7 +48,7 @@ module alu (
                 N = Out[31]; //Verifica si es negativo el valor
                 C = temp[32]; //Verifica si el bit de 32 bits hace carry a la posicion 33
                 V = ((A[31] ^ B[31]) & (A[31] ^ Out[31])) ? 1'b1 : 1'b0; //Verifica si hay overflow
-                $display("Resta");
+                //$display("Resta");
             end
 
             4'b0100: //4
@@ -137,21 +137,21 @@ module alu (
                 Out = A ^ B;
             end   
 
-            // 4'b1101: //13+
-            // begin
-            //     Out = 32'b00000000000000000000000000000000;
-            // end  
+            4'b1101: //13+
+            begin
+                Out = 32'b00000000000000000000000000000000;
+            end  
 
-            // 4'b1110: //14
-            // begin
-            //     Out = 32'b00000000000000000000000000000000;
-            // end  
+            4'b1110: //14
+            begin
+                Out = 32'b00000000000000000000000000000000;
+            end  
 
-            // default: //15
-            // begin
-            //     Out = 32'b00000000000000000000000000000000;
-            // end  
+            default: //15
+            begin
+                Out = 32'b00000000000000000000000000000000;
+            end  
         endcase
-        //$display("Z %d, N %d , C %d, V %d",zero, N, C, V );
+        //$display("Z %d, N %d , C %d, V %d , A %d, B %d, Op %b",zero, N, C, V, A, B, Op);
     end
 endmodule

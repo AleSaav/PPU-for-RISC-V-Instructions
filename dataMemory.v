@@ -17,7 +17,7 @@ module DataMemory(output reg[31:0] DataOut,
 	
 	always @ (Enable, ReadWrite, SignExt, Address, DataIn, Size)
 	begin
-		$display("entro a Data memory :\n Enable %b , RW %b , SE %b , Address = %d , DataIN = %b , Size %b", Enable, ReadWrite, SignExt, Address, DataIn, Size);
+		//$display("entro a Data memory :\n Enable %b , RW %b , SE %b , Address = %d , DataIN = %b , Size %b", Enable, ReadWrite, SignExt, Address, DataIn, Size);
     if (Enable) begin
         if (ReadWrite) //RW = 1, E = 1, SE = X <= As per document
 		begin
@@ -58,12 +58,12 @@ module DataMemory(output reg[31:0] DataOut,
 					
 					HALFWORD:
 					begin
-						DataOut = {16'b0000000000000000, Mem[Address], Mem[Address+1]};
+						DataOut = {16'b0000000000000000, Mem[Address+1], Mem[Address]};
 					end
 					
 					WORD:
 					begin
-						DataOut = ({Mem[Address + 0], Mem[Address + 1], Mem[Address + 2], Mem[Address + 3]});
+						DataOut = ({Mem[Address + 3], Mem[Address + 2], Mem[Address + 1], Mem[Address]});
 					end
 				endcase
 			end
@@ -78,12 +78,12 @@ module DataMemory(output reg[31:0] DataOut,
 					
 					HALFWORD:
 					begin
-						DataOut = $signed({Mem[Address], Mem[Address+1]});
+						DataOut = $signed({Mem[Address+1], Mem[Address]});
 					end
 					
 					WORD:
 					begin
-						DataOut = ({Mem[Address + 0], Mem[Address + 1], Mem[Address + 2], Mem[Address + 3]});
+						DataOut = ({Mem[Address + 3], Mem[Address + 2], Mem[Address + 1], Mem[Address]});
 					end
 				endcase
 			end

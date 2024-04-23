@@ -91,6 +91,7 @@ wire [2:0] shift_imm;
 wire [3:0] ALU_op;
 wire [1:0] RAM_Size;
 wire [9:0] Comb_OpFunct;
+wire [1:0] register_amount;
 
 //Signal Mux (12)
 wire Mux_load_Instr;
@@ -185,6 +186,7 @@ wire [1:0] MUX_PB_E;
 wire PC_E;
 wire IF_ID_E;
 wire CUMUX_E;
+wire [1:0] register_amount_MUX;
 
 wire[31:0] Null;
 
@@ -422,7 +424,8 @@ Hazard_Fowarding_Unit HFU(
     .ID_RS2(RS2),
     .RD_EX(RD_EX), 
     .RD_MEM(RD_MEM), 
-    .RD_WB(RD_END)
+    .RD_WB(RD_END),
+    .register_amount(register_amount_MUX)
 );
 /*********** Stages ***********/
 
@@ -615,7 +618,8 @@ Control_Unit CU(
     .ID_shift_imm(shift_imm),
     .ID_ALU_op(ALU_op),
     .RAM_Size(RAM_Size),
-    .Comb_OpFunct(Comb_OpFunct)
+    .Comb_OpFunct(Comb_OpFunct),
+    .register_amount(register_amount)
 );
 
 control_unit_multiplexer MuxCU(
@@ -632,6 +636,7 @@ control_unit_multiplexer MuxCU(
         .ID_shift_imm_IN(shift_imm),
         .RAM_Size_IN(RAM_Size),
         .Comb_OpFunct_IN(Comb_OpFunct),
+        .register_amount_IN(register_amount),
         
         .ID_Load_Instr_OUT(Mux_load_Instr), 
         .ID_RF_Enable_OUT(Mux_RF_enable), 
@@ -644,14 +649,15 @@ control_unit_multiplexer MuxCU(
         .ID_ALU_op_OUT(Mux_ALU_op),
         .ID_shift_imm_OUT(Mux_shift_imm),
         .RAM_Size_OUT(Mux_RAM_Size),
-        .Comb_OpFunct_OUT(Mux_Comb_OpFunct)
+        .Comb_OpFunct_OUT(Mux_Comb_OpFunct),
+        .register_amount_OUT(register_amount_MUX)
 );
 
 /*----------| PRECHARGING STAGE |----------*/
 
     initial begin
         // Precharging the Instruction Memory
-        fi = $fopen("PF4_debbug_input.txt","r");
+        fi = $fopen("test3.txt","r");
         Address = 9'b000000000;
         while (!$feof(fi)) begin
             code = $fscanf(fi, "%b", data);
@@ -668,7 +674,7 @@ control_unit_multiplexer MuxCU(
 
     initial begin
         // Precharging the Data Memory
-        fi = $fopen("PF4_debbug_input.txt","r");
+        fi = $fopen("test3.txt","r");
         Address2 = 9'b000000000;
         while (!$feof(fi)) begin
             code = $fscanf(fi, "%b", data);
@@ -693,8 +699,15 @@ initial begin
 end
 
 initial begin
-    #60 $display("Mem 51 %b", DataMem.Mem[51]);
-    #4 $finish;//ending the simulation so the loop doesnt stay infinitely running
+    #200 $finish;//ending the simulation so the loop doesnt stay infinitely running
+end
+reg [8:0] addr;
+initial begin
+    #140 addr = 9'd180;
+    repeat(11)begin
+    $display("Memory address = %b", {DataMem.Mem[addr], DataMem.Mem[addr+1], DataMem.Mem[addr+2], DataMem.Mem[addr+3]} );
+    addr = addr+4;
+    end
 end
 
 initial begin
@@ -733,10 +746,46 @@ initial begin
     // WB_RF_enable
     // );
 
-    $monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\nPC = %d\n \nr1 = %d \nr2 = %d \nr3 = %d \nr5 = %d  \nr6 = %d \n Address %d , DataMem out %b , Reset IF/ID = %b , Reset ID EX= %b\n, Instruction= %b\n\n\n", 
-    $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q5, RF.Q6, ALU_Mux_MEM[8:0], DataOutDM, reset_IF_ID,
-    reset_ID_EX, Instruction
+    $monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\nPC = %d\n \nr1 = %b \nr2 = %b \nr3 = %b \nr4 = %b  \nr5 = %b \nr7 = %b \nr10 = %d \nr14 = %b \nr31 = %d\n\n\n", 
+    $time, PC_Out, RF.Q1, RF.Q2, RF.Q3, RF.Q4, RF.Q5, RF.Q7, RF.Q10, RF.Q14, RF.Q31
     );
+
+    // $monitor("---------------------------- The Current Time Unit is: %0t ----------------------------\nPC = %d\n \nAddress = %b\nr1 = %d \nr2 = %d \nr3 = %d  \nr5 = %d\n PB ID %d , PB EX %d\n PA en ID = %d , PB en ID = %d\nrd %d register amount %b\n", 
+    // $time, PC_Out, DataMem.Mem[43], RF.Q1, RF.Q2, RF.Q3, RF.Q5, PB_MUX, PB_MUX_EX, PA, PB, rd, register_amount_MUX);
+    // $monitor("PC %d\nData Out %d\n RW %b\n Enable %b\n SE %b\n Address %d\n Data in %d\nSize %b\n A  %d, B  %d, Out  %d, OPCode %b\nImm12 S = %d\n\n",
+    // PC_Out,
+    // DataOutDM, 
+    // Mem_RAM_RW,
+    // Mem_RAM_Enable, 
+    // Mem_RAM_SE,
+    // ALU_Mux_MEM[8:0],
+    // PB_MEM,
+    // Mem_RAM_Size, 
+    // Alu_A, 
+    // NSO, 
+    // Alu_Out, 
+    // EX_ALU_op, 
+    // imm_s
+    // );
+
+    // $monitor("PC OUT= %d\nPA selector %b\n PA:\nSalida PA RF %d\nsalida ALU %d \nSalida Mem %d\nSalida WB %d\nSalida MUX PA %d\nPB:\nPB selector %b\nSalida PB RF %d\nSalida ALU %d \nSalida Mem %d\n Salida WB %d\nSalida MUX PB %d\nRegister File OUtpbits PA %d, PB %d\nRS1 %b , RS2 %b\nData Out %b , Instruction %b\n",
+    // PC_Out, 
+    // MUX_PA_enable,
+    // PA, 
+    // Alu_Out, 
+    // ALU_Mux_WB, 
+    // ALU_Mux_END,
+    // PA_MUX,
+    // MUX_PB_enable,
+    // PB, 
+    // Alu_Out, 
+    // ALU_Mux_WB, 
+    // ALU_Mux_END, 
+    // PB_MUX, 
+    // RF.PA,
+    // RF.PB, RS1, RS2, 
+    // dataOut, Instruction
+    // );
     
 
     // $monitor("PC %d\n\n\nA= %d\nB= %d\nOUT= %d\n\n\n-------------------------------------------------------------------------\n", 

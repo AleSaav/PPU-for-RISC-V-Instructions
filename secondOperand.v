@@ -10,12 +10,13 @@ module secondOperandHandler(
 );
 
 
-always @*
+always @(*)
     begin
         case (S)
             3'b000: //0
             begin
                 N = PB;
+                $display("Entro a PB, PB= %d", PB);
             end
 
             3'b001: //1

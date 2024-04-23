@@ -11,7 +11,7 @@ module Control_Unit(
 
     output reg [2:0] ID_shift_imm,
     output reg [3:0] ID_ALU_op,
-    output reg [1:0] RAM_Size,
+    output reg [1:0] RAM_Size, register_amount,
     output reg [9:0] Comb_OpFunct 
     );  
 
@@ -39,10 +39,12 @@ module Control_Unit(
             Comb_OpFunct = {funct3, opcode};
             ID_shift_imm = 3'b0;
             RAM_Size = 2'b0;
+            register_amount =2'b0;
 
             case(opcode)
                 7'b0010011: //Integer Register-Immediate Instructions Type I
                     begin
+                        register_amount =2'b01;
                        if (funct3 == 3'b000) 
                         begin
                             ID_ALU_op = 4'b0010;
@@ -104,6 +106,7 @@ module Control_Unit(
                     end
                 7'b0110011: //Integer Register-Register Instructions Type R
                     begin
+                        register_amount =2'b10;
                         if (funct3 == 3'b000) 
                         begin
                             if(funct7 == 7'b0000000) 
@@ -173,6 +176,7 @@ module Control_Unit(
                     end
                 7'b0000011: //Load Instructions
                     begin
+                        register_amount =2'b01;
                         RAM_Enable = 1'b1;
                         ID_load_Instr = 1'b1;
                         if (funct3 == 3'b010) 
@@ -216,6 +220,7 @@ module Control_Unit(
                     end
                 7'b0100011: //Store Instructions
                     begin
+                        register_amount =2'b10;
                         RAM_Enable = 1'b1;
                         RAM_RW = 1'b1;
                         ID_RF_enable = 1'b0;
@@ -239,14 +244,16 @@ module Control_Unit(
                             ID_shift_imm = 3'b010;
                             RAM_Size = 2'b00;
                             $display("SB");
-                            $display("CU :\n Enable %b , RW %b , SE %b , Size %b", RAM_Enable, RAM_RW, RAM_SE, RAM_Size);
+                            //$display("CU :\n Enable %b , RW %b , SE %b , Size %b", RAM_Enable, RAM_RW, RAM_SE, RAM_Size);
                         end
                     end
                 7'b1100011: 
                     begin
                         //Conditional Branch Instructions
+                        register_amount =2'b10;
                         ID_RF_enable = 1'b0;
                         ID_ALU_op = 4'b0011;
+                        ID_shift_imm = 3'b0;
                         if (funct3 == 3'b000) 
                         begin
                             $display("BEQ");
@@ -275,12 +282,14 @@ module Control_Unit(
                     end
                 7'b1101111: //Unconditional Jump Instructions
                     begin
+                        register_amount =2'b00;
                         JAL_Instr = 1'b1;
                         $display("JAL");
                         //Aqui nos faltan XXX en el opcodefunct3
                     end
                 7'b1100111: //Unconditional Jump Instructions
                     begin
+                        register_amount =2'b01;
                         JALR_Instr = 1'b1;
                         ID_ALU_op = 4'b0100;
                         ID_shift_imm = 3'b001;
@@ -288,6 +297,7 @@ module Control_Unit(
                     end
                 7'b0110111: //Type U
                     begin
+                        register_amount =2'b00;
                         ID_shift_imm = 3'b011;
                         Comb_OpFunct = {opcode};
                         $display("LUI");
@@ -295,6 +305,7 @@ module Control_Unit(
                     end
                 7'b0010111: //Type U
                     begin
+                        register_amount =2'b00;
                         AUIPC_Instr = 1'b1;
                         ID_shift_imm = 3'b011;
                         ID_ALU_op = 4'b0010;
@@ -303,6 +314,7 @@ module Control_Unit(
                 7'b0000000: //NOP Instructions
                     begin
                         $display("NOP");
+                        register_amount =2'b00;
                         ID_ALU_op = 4'b0;
                         ID_load_Instr = 1'b0;
                         ID_RF_enable = 1'b0;
@@ -311,6 +323,7 @@ module Control_Unit(
                     begin
                         //$display("Not yet a instruction");
                         $display("NOP");
+                        register_amount =2'b00;
                         ID_ALU_op = 4'b0;
                         ID_load_Instr = 1'b0;
                         ID_RF_enable = 1'b0;

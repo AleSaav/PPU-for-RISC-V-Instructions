@@ -25,6 +25,6 @@ module signalLogicBox (output reg [1:0] signalLogicBox_OUT, output reg reset_IF_
             reset_IF_ID <= 1'b0;
             reset_ID_EX <= 1'b0;
         end
-        $display("signalLogicBox_OUT=%b", signalLogicBox_OUT);
+        //$display("signalLogicBox_OUT=%b", signalLogicBox_OUT);
     end
 endmodule

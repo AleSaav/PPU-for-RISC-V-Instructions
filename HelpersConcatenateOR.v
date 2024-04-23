@@ -25,7 +25,7 @@ module concatenateImmS (
     );
 
     always @ (*) begin
-        ImmS = {Imm12_4_0_OUT, Imm12_11_5_OUT};
+        ImmS = {Imm12_11_5_OUT, Imm12_4_0_OUT};
     end
 endmodule
 
