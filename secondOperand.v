@@ -16,7 +16,7 @@ always @(*)
             3'b000: //0
             begin
                 N = PB;
-                $display("Entro a PB, PB= %d", PB);
+                //$display("Entro a PB, PB= %d", PB);
             end
 
             3'b001: //1
